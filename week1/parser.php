@@ -31,11 +31,8 @@
 
             //Creating array of tags
             $TagsMatches =  explode(",", $TagsMatches);
-            
-            //Create new body with replacemants 
-            $ChangedBody =  change($BodyMatches, $ChangeMatches);
 
-            $article = new Article($HeaderMatches, $BodyMatches, $ChangeMatches, $TagsMatches, $ChangedBody);
+            $article = new Article($HeaderMatches, $BodyMatches, $ChangeMatches, $TagsMatches);
             array_push($Objects, $article);
         }
         return $Objects;

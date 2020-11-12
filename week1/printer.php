@@ -1,4 +1,5 @@
 <?php
+    include "parser.php";
 
     //Print function
     function printHTML($ObjectsToPrint)
@@ -21,7 +22,7 @@
 
         foreach ($Objects as $value) {
             array_push($Headers, $value->Header);
-            array_push($Body, $value->ChangedBody);
+            array_push($Body, change($value->Body, $value->ChangeMap));
         }
 
         $Return = array_combine($Headers, $Body);

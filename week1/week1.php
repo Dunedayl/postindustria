@@ -2,7 +2,6 @@
     include "week_1_task_1.php";
     include "articles.php";
     include "printer.php";
-    include "parser.php";
 
     //Array of element to output
     $ArrayOfNeeded = [];
