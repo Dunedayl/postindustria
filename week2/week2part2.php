@@ -2,6 +2,7 @@
     include "requests.php";
     include "parseData.php";
     include "dateTime.php";
+    include "console.php";
 
     //Basic information
     $apiKey = "568fb694b771f72ffd435bdd1a34d08d";
@@ -9,28 +10,25 @@
     $time = ['8:00', '12:00', '16:00', '20:00'];
 
     //User input
-    print_r("Please enter city name: \n");
-    $cityName = readline();
-    print_r("Please enter country code (2 letter): \n\n");
-    $counryCode = readline();
+    $input = userInput();
+    $cityName = $input[0];
+    $counryCode = $input[1];
 
     //Request to API
     $data = makeRequest($cityName, $counryCode, $apiKey);
-
-    print_r("Weather in " . $cityName . " " . $counryCode . " for tomorrow:\n\n");
 
     //Getting timezon of City
     $timezoneSecconds = $data->city->timezone;
     $timezone = getTimezone($timezoneSecconds);
 
     foreach ($time as $key => $value) {
-        //Gettin Time
+        //Getting Time
         $weatherTime = getTime($day, $value, $timezone);
         //Getting Weather
         $weather = parseData($data,$weatherTime);
+        //Getting Readable time
+        $formatedTime = convertTo($timezone, $weather[0]);
 
-        print_r("Time: " . convertTo($timezone, $weather[0]) ."\n");
-        print_r("Weather: " . $weather[1] . "\n\n");
+        output($cityName, $counryCode, $formatedTime, $weather[1]);
     }
-
 ?>
