@@ -42,6 +42,7 @@ class Orders extends Entity
         }
     }
 
+    // save All data with replacement of fields
     public function saveAllQ(array $object)
     {
 
@@ -54,14 +55,12 @@ class Orders extends Entity
             $tableName = strtolower($class->getShortName());
         }
 
-        $propsToImplode = [];
         $props = "(";
         $insertData = [];
         foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
             $props .= $propertyName . ",";
             $insertData[] = $propertyName;
-            $propsToImplode[] = '' . $propertyName . ' = "' . $this->{$propertyName} . '"';
         }
 
         $props = substr($props, 0, -1);
@@ -71,7 +70,7 @@ class Orders extends Entity
         foreach ($object as $key => $value) {
             $sqw .= "(";
             foreach ($insertData as $key => $insert) {
-
+                // Replace filds with select from another table 
                 if ($insert == "userId") {
                     $tempVal = $value->$insert;
                     $temp = "(SELECT id FROM users where email = '$tempVal' )";
@@ -92,11 +91,6 @@ class Orders extends Entity
         }
 
         $sqw = substr($sqw, 0, -1);
-
-
-        $setClause = implode(',', $propsToImplode);
-        $sqlQuery = '';
-
         $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
         print_r("\n");
         print_r($sqlQuery);

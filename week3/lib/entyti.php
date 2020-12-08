@@ -7,17 +7,6 @@ abstract class Entity
     protected $db = null;
 
 
-    public function start()
-    {
-        include("../config/config.php");
-        try {
-            $this->db = new PDO("mysql:host=$host;dbname=$database", $user, $password);
-        } catch (\Exception $e) {
-            throw new \Exception('Error creating a database connection ');
-        }
-    }
-
-
     public function __construct($start)
     {
         if ($start == true) {
@@ -30,7 +19,7 @@ abstract class Entity
         }
     }
 
-
+    //Save all Data
     public function saveAll(array $object)
     {
 
@@ -42,24 +31,20 @@ abstract class Entity
         } else {
             $tableName = strtolower($class->getShortName());
         }
-
-        $propsToImplode = [];
-        $props = "(";
+        
+        $props = "("; // names of values to insert
         $insertData = [];
         //Find all public filds in class
         foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
             $props .= $propertyName . ",";
             $insertData[] = $propertyName;
-            $propsToImplode[] = '' . $propertyName . ' = "' . $this->{$propertyName} . '"';
         }
 
         $props = substr($props, 0, -1);
-
         $props .= ")";
-
-        $sqw = "";
-
+        $sqw = ""; // Data to insert 
+        //Saving Data from each object to sql query 
         foreach ($object as $key => $value) {
             $sqw .= "(";
             foreach ($insertData as $key => $insert) {
@@ -70,11 +55,9 @@ abstract class Entity
             }
             $sqw .= "),";
         }
-
-
+        //Removing last , 
         $sqw = substr($sqw, 0, -1);
-        $setClause = implode(',', $propsToImplode);
-        $sqlQuery = '';
+
         $sqlQuery = 'INSERT INTO ' . $tableName . " $props values " . $sqw . ';';
         print_r("\n");
 
@@ -85,4 +68,11 @@ abstract class Entity
             echo "Connection failed: " . $e->getMessage();
         }
     }
+
+    // Function for saving data with conditions
+    // redeclared in childs where needed 
+    public function saveAllQ(array $object){
+
+    }
+
 }

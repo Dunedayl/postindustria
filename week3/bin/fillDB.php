@@ -90,7 +90,6 @@ foreach ($uniqShop as $key => $value) {
     $insertShops[] = $shop;
 }
 $shopp = new Shops(true);
-$shopp->start();
 $shopp->saveAll($insertShops);
 
 //Insert all Users in DB
@@ -103,7 +102,6 @@ foreach ($uniqUsers as $key => $value) {
     $insertUsers[] = $user;
 }
 $userr = new Users(true);
-$userr->start();
 $userr->saveAll($insertUsers);
 
 //Insert all Products in DB
@@ -114,7 +112,6 @@ foreach ($uniqProducts as $key => $value) {
     $insertProducts[] = $product;
 }
 $prodd = new Products(true);
-$prodd->start();
 $prodd->saveAll($insertProducts);
 
 //Insert all Category in DB
@@ -125,7 +122,6 @@ foreach ($uniqCategories as $key => $value) {
     $insertCategories[] = $cat;
 }
 $catt = new Categories(true);
-$catt->start();
 $catt->saveAll($insertCategories);
 
 //Insert all Categoty witch each shop can have in DB
@@ -137,7 +133,6 @@ foreach ($uShopCat as $key => $vv) {
     $insertShopCategory[] = $shCat;
 }
 $shCatt = new ShopCategory(true);
-$shCatt->start();
 $shCatt->saveAllQ($insertShopCategory);
 
 //Insert all Product Category pair in DB
@@ -154,7 +149,6 @@ foreach ($uProdClear as $key => $value) {
     }
 }
 $prodcatt = new ProductCategory(true);
-$prodcatt->start();
 $prodcatt->saveAllQ($insertProdCat);
 
 
@@ -171,14 +165,12 @@ foreach ($result as $key => $value) {
     $i++;
     if ($i == 1000){
         $order = new Orders(true);
-        $order->start();
         $order->saveAllQ($insertOrders);
         $insertOrders = [];
         $i = 0;
     }
 }
 $order = new Orders(true);
-$order->start();
 $order->saveAllQ($insertOrders);
 
 //Insert all products inside Orders
@@ -194,14 +186,12 @@ foreach ($result as $key => $value) {
     $i++;
     if ($i == 1000) {
         $prodOrdd = new ProductOrder(true);
-        $prodOrdd->start();
         $prodOrdd->saveAllQ($insertProdOrder);
         $insertProdOrder = [];
         $i =0;
     }
 }
 $prodOrdd = new ProductOrder(true);
-$prodOrdd->start();
 $prodOrdd->saveAllQ($insertProdOrder);
 
 

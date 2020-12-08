@@ -38,14 +38,12 @@ CREATE TABLE shopcategory (
             $tableName = strtolower($class->getShortName());
         }
 
-        $propsToImplode = [];
         $props = "(";
         $insertData = [];
         foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
             $props .= $propertyName . ",";
             $insertData[] = $propertyName;
-            $propsToImplode[] = '' . $propertyName . ' = "' . $this->{$propertyName} . '"';
         }
 
         $props = substr($props, 0, -1);
@@ -77,11 +75,6 @@ CREATE TABLE shopcategory (
         }
 
         $sqw = substr($sqw, 0, -1);
-
-
-        $setClause = implode(',', $propsToImplode);
-        $sqlQuery = '';
-
         $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
         print_r("\n");
         print_r($sqlQuery);
