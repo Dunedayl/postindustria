@@ -10,10 +10,8 @@ class Shops extends Entity
     public $domain;
 
 
-    public static function create()
+    public function createTable()
     {
-    include("../config/config.php");
-        $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
         $sql = "
     CREATE TABLE shops 
     (
@@ -23,6 +21,6 @@ class Shops extends Entity
       index idx_dom (domain)
     );
 ";
-        $req = $db->exec($sql);
+        $this->execute($sql);
     }
 }

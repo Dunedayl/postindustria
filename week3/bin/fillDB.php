@@ -1,5 +1,4 @@
 <?php
-
 include_once ("../lib/user.php");
 include_once ("../lib/shop.php");
 include_once ("../lib/order.php");
@@ -7,7 +6,6 @@ include_once ("../lib/product.php");
 include_once ("../lib/category.php");
 include_once ("../config/config.php");
 include_once ("../lib/prodOrd.php");
-include_once ("../lib/orderCat.php");
 include_once ("../lib/productCat.php");
 include_once ("../lib/shopCategory.php");
 
@@ -19,25 +17,37 @@ $result = [];
 foreach ($json as $key => &$jvalue) {
     $result[] =  json_decode($jvalue, true);
 }
+
+$shopp = new Shops(true);
+$userr = new Users(true);
+$prodd = new Products(true);
+$catt = new Categories(true);
+$orderr = new Orders(true);
+$prodcatt = new ProductCategory(true);
+$shCatt = new ShopCategory(true);
+$prodOrdd = new ProductOrder(true);
+
+
 // Creating Database tables
-Users::create();
-Categories::create();
-Products::create();
-Shops::create();
-Orders::create();
-ProductOrder::create();
-ProductCategory::create();
-ShopCategory::create();
+$shopp->createTable();
+$userr->createTable();
+$prodd->createTable();
+$catt->createTable();
+$orderr->createTable();
+$prodOrdd->createTable();
+$prodcatt->createTable();
+$shCatt->createTable();
+
 
 // Arrays for storing TEMP data
 $shops = [];
 $users = [];
 $orders = [];
 $products = [];
-$productsClear = [];
-$uproducts = [];
 $categories = [];
-$shopCat = [];
+$shopCategory = [];
+$uniqProducts = [];
+$productsNames = [];
 
 //Parsing JSSONs for data
 foreach ($result as $key => &$rvalue) {
@@ -47,19 +57,19 @@ foreach ($result as $key => &$rvalue) {
     $orders[] = ["Sum" => $rvalue["sum"], "Date" => $rvalue["date"]];
 
     foreach ($rvalue["products"] as $key => &$prod) {
-        $uproducts[] = ["Name" => $prod["name"]];
+        $uniqProducts[] = ["Name" => $prod["name"]];
         $products[] = ["Name" => $prod["name"], "Category" => $prod["product_categories"]];
-        $productsClear[] = ["Name" => $prod["name"]];
+        $productsNames[] = ["Name" => $prod["name"]];
         $prod["product_categories"] = explode(",", $prod["product_categories"]);
 
-        foreach ($prod["product_categories"] as $key => $prods) {
-            $shopCat[] = ["ShopDomain" => $rvalue["shop_domain"], "Category" => $prods];
+        foreach ($prod["product_categories"] as $key => $valueCategory) {
+            $shopCategory[] = ["ShopDomain" => $rvalue["shop_domain"], "Category" => $valueCategory];
         }
     }
 }
 
 //Getting uniq filds 
-$uShopCat = array_unique($shopCat, SORT_REGULAR);
+$uniqShopCategory = array_unique($shopCategory, SORT_REGULAR);
 $uniqShop = array_unique($shops, SORT_REGULAR);
 $uniqUsers = array_unique($users, SORT_REGULAR);
 $uniqProducts = array_unique($products, SORT_REGULAR);
@@ -70,8 +80,8 @@ foreach ($uniqProducts as $key => &$upvalue) {
     $upvalue["Category"] = $temp;
 }
 
-$uProdClear = $uniqProducts;
-$uniqProducts = array_unique($productsClear, SORT_REGULAR);
+$uniqProductCategoryPairs = $uniqProducts;
+$uniqProducts = array_unique($productsNames, SORT_REGULAR);
 $uniqCategories = array_unique($categories, SORT_REGULAR);
 
 $addedCat = [];
@@ -89,7 +99,6 @@ foreach ($uniqShop as $key => $value) {
     $shop->domain = $value["Domain"];
     $insertShops[] = $shop;
 }
-$shopp = new Shops(true);
 $shopp->saveAll($insertShops);
 
 //Insert all Users in DB
@@ -101,7 +110,6 @@ foreach ($uniqUsers as $key => $value) {
     $user->email = $value["Email"];
     $insertUsers[] = $user;
 }
-$userr = new Users(true);
 $userr->saveAll($insertUsers);
 
 //Insert all Products in DB
@@ -111,7 +119,6 @@ foreach ($uniqProducts as $key => $value) {
     $product->name = $value["Name"];
     $insertProducts[] = $product;
 }
-$prodd = new Products(true);
 $prodd->saveAll($insertProducts);
 
 //Insert all Category in DB
@@ -121,23 +128,21 @@ foreach ($uniqCategories as $key => $value) {
     $cat->name = $value;
     $insertCategories[] = $cat;
 }
-$catt = new Categories(true);
 $catt->saveAll($insertCategories);
 
-//Insert all Categoty witch each shop can have in DB
+//Insert all Categoty which each shop can have in DB
 $insertShopCategory = [];
-foreach ($uShopCat as $key => $vv) {
+foreach ($uniqShopCategory as $key => $vv) {
     $shCat = new ShopCategory(false);
     $shCat->shopId = $vv["ShopDomain"];
     $shCat->categoryId = $vv["Category"];
     $insertShopCategory[] = $shCat;
 }
-$shCatt = new ShopCategory(true);
-$shCatt->saveAllQ($insertShopCategory);
+$shCatt->saveAll($insertShopCategory);
 
 //Insert all Product Category pair in DB
 $insertProdCat = [];
-foreach ($uProdClear as $key => $value) {
+foreach ($uniqProductCategoryPairs as $key => $value) {
     foreach ($value["Category"] as $key => $ss) {
         if (!in_array($ss, $addedCat[$value["Name"]])){
             $addedCat[$value["Name"]][] = $ss;
@@ -148,11 +153,10 @@ foreach ($uProdClear as $key => $value) {
         }
     }
 }
-$prodcatt = new ProductCategory(true);
-$prodcatt->saveAllQ($insertProdCat);
+$prodcatt->saveAll($insertProdCat);
 
 
-//Insert all orders in chunks bt 1000
+//Insert all orders in chunks by 1000
 $i = 0;
 $insertOrders = [];
 foreach ($result as $key => $value) {
@@ -163,15 +167,13 @@ foreach ($result as $key => $value) {
     $order->userId = $value["user_email"];
     $insertOrders[] = $order;
     $i++;
-    if ($i == 1000){
-        $order = new Orders(true);
-        $order->saveAllQ($insertOrders);
+    if ($i == 5000){
+        $orderr->saveAll($insertOrders);
         $insertOrders = [];
         $i = 0;
     }
 }
-$order = new Orders(true);
-$order->saveAllQ($insertOrders);
+$orderr->saveAll($insertOrders);
 
 //Insert all products inside Orders
 $i = 0;
@@ -184,15 +186,10 @@ foreach ($result as $key => $value) {
         $insertProdOrder[] = $prodOrd;
     }
     $i++;
-    if ($i == 1000) {
-        $prodOrdd = new ProductOrder(true);
-        $prodOrdd->saveAllQ($insertProdOrder);
+    if ($i == 5000) {
+        $prodOrdd->saveAll($insertProdOrder);
         $insertProdOrder = [];
-        $i =0;
+        $i = 0;
     }
 }
-$prodOrdd = new ProductOrder(true);
-$prodOrdd->saveAllQ($insertProdOrder);
-
-
-?>
+$prodOrdd->saveAll($insertProdOrder);

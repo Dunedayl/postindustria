@@ -22,57 +22,68 @@ abstract class Entity
     //Save all Data
     public function saveAll(array $object)
     {
-
         $class = new \ReflectionClass($this);
-        $tableName = '';
+        $tableName = $this->getTableName($class);
+        $insertData = $this->getPropertiesNames($class);
+        $propertiesForSqlInsert = "(" . implode(",", $insertData) . ")"; // names of values to insert
+        $sqlData = $this->generateValuesToInsert($object, $insertData);
+        $sqlDataQuery = 'INSERT INTO ' . $tableName . " $propertiesForSqlInsert values " . $sqlData . ';';
+        $this->execute($sqlDataQuery);
+    }
 
+    protected function getTableName($class)
+    {
+        $tableName = '';
         if ($this->tableName != '') {
             $tableName = $this->tableName;
         } else {
             $tableName = strtolower($class->getShortName());
         }
-        
-        $props = "("; // names of values to insert
+        return $tableName;
+    }
+
+    protected function getPropertiesNames($class)
+    {
         $insertData = [];
-        //Find all public filds in class
         foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
-            $props .= $propertyName . ",";
             $insertData[] = $propertyName;
         }
+        return $insertData;
+    }
 
-        $props = substr($props, 0, -1);
-        $props .= ")";
-        $sqw = ""; // Data to insert 
+    protected function execute($sqlDataQuery)
+    {
+        try {
+            $result = $this->db->exec($sqlDataQuery);
+            $class = new \ReflectionClass($this);
+            $className = strtolower($class->getShortName());
+            echo "\n$className successfully";
+        } catch (PDOException $e) {
+            echo "\nConnection failed: " . $e->getMessage();
+            print_r($sqlDataQuery);
+        }
+    }
+
+    protected function generateValuesToInsert(array $object, $insertData)
+    {
+        $sqlData = ""; // Data to insert 
         //Saving Data from each object to sql query 
         foreach ($object as $key => $value) {
-            $sqw .= "(";
+            $sqlData .= "(";
             foreach ($insertData as $key => $insert) {
-                $sqw .= '"' . addslashes($value->$insert) . '"';
+                $sqlData .= '"' . addslashes($value->$insert) . '"';
                 if ($insert != end($insertData)) {
-                    $sqw .= ",";
+                    $sqlData .= ",";
                 }
             }
-            $sqw .= "),";
+            $sqlData .= ")";
+            if ($value != end($object)) {
+                $sqlData .= ",";
+            }
         }
-        //Removing last , 
-        $sqw = substr($sqw, 0, -1);
-
-        $sqlQuery = 'INSERT INTO ' . $tableName . " $props values " . $sqw . ';';
-        print_r("\n");
-
-        try {
-            $result = $this->db->exec($sqlQuery);
-            echo "Connected successfully";
-        } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
-        }
+        return $sqlData;
     }
 
-    // Function for saving data with conditions
-    // redeclared in childs where needed 
-    public function saveAllQ(array $object){
-
-    }
-
+    public abstract function createTable();
 }

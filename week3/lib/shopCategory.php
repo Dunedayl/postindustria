@@ -10,10 +10,9 @@ class ShopCategory extends Entity
     public $categoryId;
 
 
-    public static function create()
+    public function createTable()
     {
-        include("../config/config.php");
-        $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
+
         $sql = "
 CREATE TABLE shopcategory (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,67 +22,40 @@ CREATE TABLE shopcategory (
     FOREIGN KEY (shopId) REFERENCES shops(id)
 );
 ";
-        $req = $db->exec($sql);
+        $this->execute($sql);
+
     }
 
-    public function saveAllQ(array $object)
+
+    protected function generateValuesToInsert(array $object, $insertData)
     {
-
-        $class = new \ReflectionClass($this);
-        $tableName = '';
-
-        if ($this->tableName != '') {
-            $tableName = $this->tableName;
-        } else {
-            $tableName = strtolower($class->getShortName());
-        }
-
-        $props = "(";
-        $insertData = [];
-        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $propertyName = $property->getName();
-            $props .= $propertyName . ",";
-            $insertData[] = $propertyName;
-        }
-
-        $props = substr($props, 0, -1);
-        $props .= ")";
-        $sqw = "";
-
+        $sqlData = "";
         foreach ($object as $key => $value) {
-            $sqw .= "(";
+            $sqlData .= "(";
             foreach ($insertData as $key => $insert) {
 
                 if ($insert == "shopId") {
                     $tempVal = $value->$insert;
                     $tempVal = addslashes($tempVal);
                     $temp = "(SELECT id FROM shops where domain = '$tempVal' )";
-                    $sqw .= '' . $temp . '';
+                    $sqlData .= '' . $temp . '';
                 } elseif ($insert == "categoryId") {
                     $tempVal1 = $value->$insert;
                     $temp = "(SELECT id FROM categories where name = '$tempVal1' )";
-                    $sqw .= '' . $temp . '';
+                    $sqlData .= '' . $temp . '';
                 } else {
-                    $sqw .= '"' . $value->$insert . '"';
+                    $sqlData .= '"' . $value->$insert . '"';
                 }
 
                 if ($insert != end($insertData)) {
-                    $sqw .= ",";
+                    $sqlData .= ",";
                 }
             }
-            $sqw .= "),";
+            $sqlData .= ")";
+            if ($value != end($object)) {
+                $sqlData .= ",";
+            }
         }
-
-        $sqw = substr($sqw, 0, -1);
-        $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
-        print_r("\n");
-        print_r($sqlQuery);
-        print_r("\n");
-        try {
-            $result = $this->db->exec($sqlQuery);
-            echo "Connected successfully";
-        } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
-        }
+        return $sqlData;
     }
 }

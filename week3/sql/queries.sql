@@ -112,26 +112,31 @@ having
 я вручную добавлю в базу еще магазинов и покупок)
 
 select
-  users.firstName,
-  users.firstName
+  firstName,
+  lastName
 from
   (
     select
-      DISTINCT orders.userId,
-      orders.shopId
+      users.id
     from
-      orders
-  ) as ds
-  join users on users.id = userId
-where
-  userId
-group by
-  users.firstName,
-  users.firstName
-having
-  count(Distinct shopId) = (
-    select
-      count(Distinct id)
-    from
-      shops
-  )
+      (
+        select
+          DISTINCT orders.userId,
+          orders.shopId
+        from
+          orders
+      ) as ds
+      join users on users.id = userId
+    where
+      userId
+    group by
+      users.id
+    having
+      count(Distinct shopId) = (
+        select
+          count(Distinct id)
+        from
+          shops
+      )
+  ) as da
+  join users on users.id = da.id

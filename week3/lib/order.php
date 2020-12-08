@@ -13,95 +13,52 @@ class Orders extends Entity
     public $shopId;
 
 
-    public static function create()
+    public function createTable()
     {
-        include("../config/config.php");
-        $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
         $sql = "
-            CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    summa int NOT NULL,
-    order_date datetime NOT NULL,
-    userId int NOT NULL,
-    shopId int NOT NULL,
-    FOREIGN KEY (userId) REFERENCES users(id),
-    FOREIGN KEY (shopId) REFERENCES shops(id),
-    index ids_summa_date_id (summa,order_date,id)
-);
+                        CREATE TABLE orders (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                summa int NOT NULL,
+                order_date datetime NOT NULL,
+                userId int NOT NULL,
+                shopId int NOT NULL,
+                FOREIGN KEY (userId) REFERENCES users(id),
+                FOREIGN KEY (shopId) REFERENCES shops(id),
+                index ids_summa_date_id (summa,order_date,id)
+            );
             ";
-        $req = $db->exec($sql);
+        $this->execute($sql);
     }
 
 
-    public function getName($var)
+    protected function generateValuesToInsert(array $object, $insertData)
     {
-        foreach ($GLOBALS as $varName => $value) {
-            if ($value === $var) {
-                return $varName;
-            }
-        }
-    }
-
-    // save All data with replacement of fields
-    public function saveAllQ(array $object)
-    {
-
-        $class = new \ReflectionClass($this);
-        $tableName = '';
-
-        if ($this->tableName != '') {
-            $tableName = $this->tableName;
-        } else {
-            $tableName = strtolower($class->getShortName());
-        }
-
-        $props = "(";
-        $insertData = [];
-        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $propertyName = $property->getName();
-            $props .= $propertyName . ",";
-            $insertData[] = $propertyName;
-        }
-
-        $props = substr($props, 0, -1);
-        $props .= ")";
-        $sqw = "";
-
+        $sqlData = "";
         foreach ($object as $key => $value) {
-            $sqw .= "(";
+            $sqlData .= "(";
             foreach ($insertData as $key => $insert) {
                 // Replace filds with select from another table 
                 if ($insert == "userId") {
                     $tempVal = $value->$insert;
                     $temp = "(SELECT id FROM users where email = '$tempVal' )";
-                    $sqw .= '' . $temp . '';
+                    $sqlData .= '' . $temp . '';
                 } elseif ($insert == "shopId") {
                     $tempVal = $value->$insert;
                     $temp = "(SELECT id FROM shops where domain = '$tempVal' )";
-                    $sqw .= '' . $temp . '';
+                    $sqlData .= '' . $temp . '';
                 } else {
-                    $sqw .= '"' . $value->$insert . '"';
+                    $sqlData .= '"' . $value->$insert . '"';
                 }
 
                 if ($insert != end($insertData)) {
-                    $sqw .= ",";
+                    $sqlData .= ",";
                 }
             }
-            $sqw .= "),";
+            $sqlData .= ")";
+            if ($value != end($object)) {
+                $sqlData .= ",";
+            }
         }
-
-        $sqw = substr($sqw, 0, -1);
-        $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
-        print_r("\n");
-        print_r($sqlQuery);
-        print_r("\n");
-
-
-        try {
-            $result = $this->db->exec($sqlQuery);
-            echo "Connected successfully";
-        } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
-        }
+        return $sqlData;
     }
 }

@@ -1,20 +1,19 @@
 <?php
-    include_once ("entyti.php");
-    
-    class Users extends Entity
+include_once("entyti.php");
+
+class Users extends Entity
+{
+    protected $table = "users";
+
+    protected $id;
+    public $firstName;
+    public $lastName;
+    public $email;
+
+
+    public function createTable()
     {
-        protected $table = "users";
 
-        protected $id;
-        public $firstName;
-        public $lastName;
-        public $email;
-
-
-    public static function create()
-    {
-        include("../config/config.php");
-        $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
         $sql = "
 CREATE TABLE users 
 (
@@ -28,10 +27,6 @@ index ids_email (email)
 ;
 
 ";
-        $req = $db->exec($sql);
+        $this->execute($sql);
     }
-
-    }
-
-
-
+}

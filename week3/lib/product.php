@@ -8,20 +8,17 @@ class Products extends Entity
     protected $id;
     public $name;
 
-    public static function create()
+    public function createTable()
     {
-        include("../config/config.php");
-        $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
         $sql = "
-CREATE TABLE products 
-(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(400) NOT NULL,
-  index ids_prod (name)
-
-)
-;      
-";
-        $req = $db->exec($sql);
+      CREATE TABLE products 
+      (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(400) NOT NULL,
+        index ids_prod (name)
+      )
+      ;
+      ";
+      $this->execute($sql);
     }
 }
