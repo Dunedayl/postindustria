@@ -1,12 +1,12 @@
 <?php
-    include_once ("entyti.php");
-    
-    class Products extends Entity
-    {
-        protected $table = "products";
+include_once("entyti.php");
 
-        protected $id;
-        public $name;
+class Products extends Entity
+{
+    protected $table = "products";
+
+    protected $id;
+    public $name;
 
     public static function create()
     {
@@ -24,5 +24,4 @@ CREATE TABLE products
 ";
         $req = $db->exec($sql);
     }
-
-    }
+}

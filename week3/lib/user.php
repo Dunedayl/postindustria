@@ -14,7 +14,6 @@
     public static function create()
     {
         include("../config/config.php");
-        //print_r($host);
         $db =  new PDO("mysql:host=$host;dbname=$database", $user, $password);
         $sql = "
 CREATE TABLE users 

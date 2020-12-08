@@ -41,8 +41,7 @@ CREATE TABLE productcategory (
         $propsToImplode = [];
         $props = "(";
         $insertData = [];
-        // собираем поля класса, которые мы будем использовать в запросе
-        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) { // собираем информацию только о полях класса которые имеют модификатор `public`
+        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
             $props .= $propertyName . ",";
             $insertData[] = $propertyName;
@@ -80,7 +79,7 @@ CREATE TABLE productcategory (
         $sqw = substr($sqw, 0, -1);
 
 
-        $setClause = implode(',', $propsToImplode); // записываем в наш генериреумый запрос все поля
+        $setClause = implode(',', $propsToImplode);
         $sqlQuery = '';
 
         $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';

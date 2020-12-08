@@ -15,11 +15,11 @@ $temp = file_get_contents("purchase_log.json");
 $json = explode("\n", $temp);
 
 $result = [];
-
+//Getting data from JSONs
 foreach ($json as $key => &$jvalue) {
     $result[] =  json_decode($jvalue, true);
 }
-
+// Creating Database tables
 Users::create();
 Categories::create();
 Products::create();
@@ -29,7 +29,7 @@ ProductOrder::create();
 ProductCategory::create();
 ShopCategory::create();
 
-
+// Arrays for storing TEMP data
 $shops = [];
 $users = [];
 $orders = [];
@@ -39,7 +39,7 @@ $uproducts = [];
 $categories = [];
 $shopCat = [];
 
-
+//Parsing JSSONs for data
 foreach ($result as $key => &$rvalue) {
 
     $shops[] = ["Name" => $rvalue["shop_name"], "Domain" => $rvalue["shop_domain"]];
@@ -58,7 +58,7 @@ foreach ($result as $key => &$rvalue) {
     }
 }
 
-
+//Getting uniq filds 
 $uShopCat = array_unique($shopCat, SORT_REGULAR);
 $uniqShop = array_unique($shops, SORT_REGULAR);
 $uniqUsers = array_unique($users, SORT_REGULAR);
@@ -71,7 +71,6 @@ foreach ($uniqProducts as $key => &$upvalue) {
 }
 
 $uProdClear = $uniqProducts;
-
 $uniqProducts = array_unique($productsClear, SORT_REGULAR);
 $uniqCategories = array_unique($categories, SORT_REGULAR);
 
@@ -82,9 +81,7 @@ foreach ($uniqProducts as $key => $value) {
 }
 
 
-$i = 0;
-
-
+//Inserting all Shops in DB
 $insertShops =[];
 foreach ($uniqShop as $key => $value) {
     $shop = new Shops(false);
@@ -96,7 +93,7 @@ $shopp = new Shops(true);
 $shopp->start();
 $shopp->saveAll($insertShops);
 
-
+//Insert all Users in DB
 $insertUsers = [];
 foreach ($uniqUsers as $key => $value) {
     $user = new Users(false);
@@ -109,7 +106,7 @@ $userr = new Users(true);
 $userr->start();
 $userr->saveAll($insertUsers);
 
-
+//Insert all Products in DB
 $insertProducts = [];
 foreach ($uniqProducts as $key => $value) {
     $product = new Products(false);
@@ -120,7 +117,7 @@ $prodd = new Products(true);
 $prodd->start();
 $prodd->saveAll($insertProducts);
 
-
+//Insert all Category in DB
 $insertCategories = [];
 foreach ($uniqCategories as $key => $value) {
     $cat = new Categories(false);
@@ -131,7 +128,7 @@ $catt = new Categories(true);
 $catt->start();
 $catt->saveAll($insertCategories);
 
-
+//Insert all Categoty witch each shop can have in DB
 $insertShopCategory = [];
 foreach ($uShopCat as $key => $vv) {
     $shCat = new ShopCategory(false);
@@ -143,8 +140,7 @@ $shCatt = new ShopCategory(true);
 $shCatt->start();
 $shCatt->saveAllQ($insertShopCategory);
 
-
-$i = 0;
+//Insert all Product Category pair in DB
 $insertProdCat = [];
 foreach ($uProdClear as $key => $value) {
     foreach ($value["Category"] as $key => $ss) {
@@ -162,7 +158,7 @@ $prodcatt->start();
 $prodcatt->saveAllQ($insertProdCat);
 
 
-
+//Insert all orders in chunks bt 1000
 $i = 0;
 $insertOrders = [];
 foreach ($result as $key => $value) {
@@ -185,7 +181,7 @@ $order = new Orders(true);
 $order->start();
 $order->saveAllQ($insertOrders);
 
-
+//Insert all products inside Orders
 $i = 0;
 $insertProdOrder = [];
 foreach ($result as $key => $value) {

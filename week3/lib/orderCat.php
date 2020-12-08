@@ -1,14 +1,14 @@
 <?php
-    include_once("entyti.php");
+include_once("entyti.php");
 
-    class OrderCategory extends Entity
-    {
-        protected $table = "orderCategory";
+class OrderCategory extends Entity
+{
+    protected $table = "orderCategory";
 
-        protected $id;
-        public $orderId;
-        public $productId;
-        public $categoryId;
+    protected $id;
+    public $orderId;
+    public $productId;
+    public $categoryId;
 
 
     public static function create()
@@ -29,36 +29,35 @@ CREATE TABLE ordercategory (
         $req = $db->exec($sql);
     }
 
-        public function saveAllQ(array $object)
-        {
+    public function saveAllQ(array $object)
+    {
 
-            $class = new \ReflectionClass($this);
-            $tableName = '';
+        $class = new \ReflectionClass($this);
+        $tableName = '';
 
-            if ($this->tableName != '') {
-                $tableName = $this->tableName;
-            } else {
-                $tableName = strtolower($class->getShortName());
-            }
+        if ($this->tableName != '') {
+            $tableName = $this->tableName;
+        } else {
+            $tableName = strtolower($class->getShortName());
+        }
 
-            $propsToImplode = [];
-            $props = "(";
-            $insertData = [];
-            // собираем поля класса, которые мы будем использовать в запросе
-            foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) { // собираем информацию только о полях класса которые имеют модификатор `public`
-                $propertyName = $property->getName();
-                $props .= $propertyName . ",";
-                $insertData[] = $propertyName;
-                $propsToImplode[] = '' . $propertyName . ' = "' . $this->{$propertyName} . '"';
-            }
+        $propsToImplode = [];
+        $props = "(";
+        $insertData = [];
+        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            $propertyName = $property->getName();
+            $props .= $propertyName . ",";
+            $insertData[] = $propertyName;
+            $propsToImplode[] = '' . $propertyName . ' = "' . $this->{$propertyName} . '"';
+        }
 
-            $props = substr($props, 0, -1);
-            $props .= ")";
-            $sqw = "";
+        $props = substr($props, 0, -1);
+        $props .= ")";
+        $sqw = "";
 
-            foreach ($object as $key => $value) {
-                $sqw .= "(";
-                foreach ($insertData as $key => $insert) {
+        foreach ($object as $key => $value) {
+            $sqw .= "(";
+            foreach ($insertData as $key => $insert) {
 
                 if ($insert == "productId") {
                     $tempVal = $value->$insert;
@@ -86,22 +85,21 @@ CREATE TABLE ordercategory (
             $sqw .= "),";
         }
 
-            $sqw = substr($sqw, 0, -1);
+        $sqw = substr($sqw, 0, -1);
 
 
-            $setClause = implode(',', $propsToImplode); // записываем в наш генериреумый запрос все поля
-            $sqlQuery = '';
+        $setClause = implode(',', $propsToImplode);
+        $sqlQuery = '';
 
-            $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
-            print_r("\n");
-            print_r($sqlQuery);
-            print_r("\n");
-            try {
-                $result = $this->db->exec($sqlQuery);
-                echo "Connected successfully";
-            } catch (PDOException $e) {
-                echo "Connection failed: " . $e->getMessage();
-            }
+        $sqlQuery = 'INSERT INTO ' . $tableName . " $props VALUES " . $sqw . ';';
+        print_r("\n");
+        print_r($sqlQuery);
+        print_r("\n");
+        try {
+            $result = $this->db->exec($sqlQuery);
+            echo "Connected successfully";
+        } catch (PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
         }
-
     }
+}
