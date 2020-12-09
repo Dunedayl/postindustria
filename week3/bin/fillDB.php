@@ -46,7 +46,6 @@ $orders = [];
 $products = [];
 $categories = [];
 $shopCategory = [];
-$uniqProducts = [];
 $productsNames = [];
 
 //Parsing JSSONs for data
@@ -57,7 +56,6 @@ foreach ($result as $key => &$rvalue) {
     $orders[] = ["Sum" => $rvalue["sum"], "Date" => $rvalue["date"]];
 
     foreach ($rvalue["products"] as $key => &$prod) {
-        $uniqProducts[] = ["Name" => $prod["name"]];
         $products[] = ["Name" => $prod["name"], "Category" => $prod["product_categories"]];
         $productsNames[] = ["Name" => $prod["name"]];
         $prod["product_categories"] = explode(",", $prod["product_categories"]);
@@ -81,12 +79,12 @@ foreach ($uniqProducts as $key => &$upvalue) {
 }
 
 $uniqProductCategoryPairs = $uniqProducts;
-$uniqProducts = array_unique($productsNames, SORT_REGULAR);
+$uniqProductsNames = array_unique($productsNames, SORT_REGULAR);
 $uniqCategories = array_unique($categories, SORT_REGULAR);
 
 $addedCat = [];
 
-foreach ($uniqProducts as $key => $value) {
+foreach ($uniqProductsNames as $key => $value) {
     $addedCat[$value["Name"]] = [];
 }
 
@@ -114,7 +112,7 @@ $userr->saveAll($insertUsers);
 
 //Insert all Products in DB
 $insertProducts = [];
-foreach ($uniqProducts as $key => $value) {
+foreach ($uniqProductsNames as $key => $value) {
     $product = new Products(false);
     $product->name = $value["Name"];
     $insertProducts[] = $product;
@@ -156,7 +154,7 @@ foreach ($uniqProductCategoryPairs as $key => $value) {
 $prodcatt->saveAll($insertProdCat);
 
 
-//Insert all orders in chunks by 1000
+//Insert all orders in chunks by 5000
 $i = 0;
 $insertOrders = [];
 foreach ($result as $key => $value) {
@@ -175,7 +173,7 @@ foreach ($result as $key => $value) {
 }
 $orderr->saveAll($insertOrders);
 
-//Insert all products inside Orders
+//Insert all products inside Orders in chunks by 5000
 $i = 0;
 $insertProdOrder = [];
 foreach ($result as $key => $value) {
