@@ -1,5 +1,6 @@
 <?php
-include_once("entyti.php");
+
+namespace week3\lib;
 
 class Products extends Entity
 {
@@ -8,17 +9,8 @@ class Products extends Entity
     protected $id;
     public $name;
 
-    public function createTable()
+    public static function findId($name)
     {
-        $sql = "
-      CREATE TABLE products 
-      (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(400) NOT NULL,
-        index ids_prod (name)
-      )
-      ;
-      ";
-      $this->execute($sql);
+        return "(SELECT id FROM products where name = '$name' )";
     }
 }

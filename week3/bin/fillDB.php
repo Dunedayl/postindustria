@@ -1,4 +1,29 @@
 <?php
+
+use week3\lib\Orders;
+use week3\lib\ProductOrder;
+use week3\lib\Users;
+use week3\lib\ShopCategory;
+use week3\lib\ProductCategory;
+use week3\lib\Products;
+use week3\lib\Shops;
+use week3\lib\Categories;
+use week3\lib\entityRepository;
+use week3\lib\sqlHelper;
+
+include_once("../lib/user.php");
+include_once("../lib/shop.php");
+include_once("../lib/order.php");
+include_once("../lib/product.php");
+include_once("../lib/category.php");
+include_once("../config/config.php");
+include_once("../lib/prodOrd.php");
+include_once("../lib/productCat.php");
+include_once("../lib/shopCategory.php");
+include_once("../lib/entityRepository.php");
+include_once("../lib/sqlHelper.php");
+
+
 class fillDb
 {
     //Array of pased data
@@ -11,14 +36,7 @@ class fillDb
     public $productsNames = [];
 
     //Classes
-    public $shopp;
-    public $userr;
-    public $prodd;
-    public $catt;
-    public $orderr;
-    public $prodcatt;
-    public $shCatt;
-    public $prodOrdd;
+    public $Repository;
 
     //Uniq data 
     public  $uniqShopCategory;
@@ -43,11 +61,11 @@ class fillDb
             $this->result[] =  json_decode($jvalue, true);
         }
 
+        $this->Repository = new entityRepository();
 
         $this->parseData();
         $this->findUniqData();
-        $this->initClasses();
-        $this->createAllTables();
+        entityRepository::createTables();
         $this->insertShops();
         $this->insertUsers();
         $this->insertProducts();
@@ -58,30 +76,31 @@ class fillDb
         $this->insertProductsOrder();
     }
 
+
     public function parseData()
     {
 
         foreach ($this->result as $key => &$rvalue) {
 
-            $this->shops[] = ["Name" => $rvalue["shop_name"], "Domain" => $rvalue["shop_domain"]];
-            $this->users[] = ["FirstName" => $rvalue["user_first_name"], "LastName" => $rvalue["user_last_name"], "Email" => $rvalue["user_email"]];
+            $this->shops[] = ["Name" => addslashes($rvalue["shop_name"]), "Domain" => addslashes($rvalue["shop_domain"])];
+            $this->users[] = ["FirstName" => addslashes($rvalue["user_first_name"]), "LastName" => addslashes($rvalue["user_last_name"]), "Email" => addslashes($rvalue["user_email"])];
             $this->orders[] = ["Sum" => $rvalue["sum"], "Date" => $rvalue["date"]];
 
             foreach ($rvalue["products"] as $key => &$prod) {
-                $this->products[] = ["Name" => $prod["name"], "Category" => $prod["product_categories"]];
-                $this->productsNames[] = ["Name" => $prod["name"]];
+                $this->products[] = ["Name" => addslashes($prod["name"]), "Category" => addslashes($prod["product_categories"])];
+                $this->productsNames[] = ["Name" => addslashes($prod["name"])];
                 $prod["product_categories"] = explode(",", $prod["product_categories"]);
 
                 foreach ($prod["product_categories"] as $key => $valueCategory) {
-                    $this->shopCategory[] = ["ShopDomain" => $rvalue["shop_domain"], "Category" => $valueCategory];
+                    $this->shopCategory[] = ["ShopDomain" => $rvalue["shop_domain"], "Category" => addslashes($valueCategory)];
                 }
             }
         }
     }
 
+
     public function findUniqData()
     {
-
         $this->uniqShopCategory = array_unique($this->shopCategory, SORT_REGULAR);
         $this->uniqShop = array_unique($this->shops, SORT_REGULAR);
         $this->uniqUsers = array_unique($this->users, SORT_REGULAR);
@@ -103,100 +122,72 @@ class fillDb
         }
     }
 
-    public function initClasses()
-    {
-
-        include_once("../lib/user.php");
-        include_once("../lib/shop.php");
-        include_once("../lib/order.php");
-        include_once("../lib/product.php");
-        include_once("../lib/category.php");
-        include_once("../config/config.php");
-        include_once("../lib/prodOrd.php");
-        include_once("../lib/productCat.php");
-        include_once("../lib/shopCategory.php");
-
-        $this->shopp = new Shops(true);
-        $this->userr = new Users(true);
-        $this->prodd = new Products(true);
-        $this->catt = new Categories(true);
-        $this->orderr = new Orders(true);
-        $this->prodcatt = new ProductCategory(true);
-        $this->shCatt = new ShopCategory(true);
-        $this->prodOrdd = new ProductOrder(true);
-    }
-
-    public function createAllTables()
-    {
-        $this->userr->createTable();
-        $this->shopp->createTable();
-        $this->prodd->createTable();
-        $this->catt->createTable();
-        $this->orderr->createTable();
-        $this->prodOrdd->createTable();
-        $this->prodcatt->createTable();
-        $this->shCatt->createTable();
-    }
-
     public function insertShops()
     {
         //Inserting all Shops in DB
         $insertShops = [];
         foreach ($this->uniqShop as $key => $value) {
-            $shop = new Shops(false);
+            $shop = new Shops();
             $shop->name = $value["Name"];
             $shop->domain = $value["Domain"];
             $insertShops[] = $shop;
         }
-        $this->shopp->saveAll($insertShops);
+        $this->Repository->saveAll($insertShops);
     }
+
+
     public function insertUsers()
     {
         $insertUsers = [];
         foreach ($this->uniqUsers as $key => $value) {
-            $user = new Users(false);
+            $user = new Users();
             $user->firstName = $value["FirstName"];
             $user->lastName = $value["LastName"];
             $user->email = $value["Email"];
             $insertUsers[] = $user;
         }
-        $this->userr->saveAll($insertUsers);
+        $this->Repository->saveAll($insertUsers);
     }
+
+
     public function insertProducts()
     {
         $insertProducts = [];
         foreach ($this->uniqProductsNames as $key => $value) {
-            $product = new Products(false);
+            $product = new Products();
             $product->name = $value["Name"];
             $insertProducts[] = $product;
         }
-        $this->prodd->saveAll($insertProducts);
-
+        $this->Repository->saveAll($insertProducts);
     }
+
+
     public function insertCategories()
     {
         $insertCategories = [];
         foreach ($this->uniqCategories as $key => $value) {
-            $cat = new Categories(false);
+            $cat = new Categories();
             $cat->name = $value;
             $insertCategories[] = $cat;
         }
-        $this->catt->saveAll($insertCategories);
-
+        $this->Repository->saveAll($insertCategories);
     }
+
+
     public function insertShopCategory()
     {
         //Insert all Categoty which each shop can have in DB
         $insertShopCategory = [];
         foreach ($this->uniqShopCategory as $key => $vv) {
-            $shCat = new ShopCategory(false);
-            $shCat->shopId = $vv["ShopDomain"];
-            $shCat->categoryId = $vv["Category"];
+            $shCat = new ShopCategory();
+            $shCat->shopId = ["Value" => Shops::findId($vv["ShopDomain"])];
+            $shCat->categoryId = ["Value" => Categories::findId($vv["Category"])];
             $insertShopCategory[] = $shCat;
         }
-        $this->shCatt->saveAll($insertShopCategory);
-
+        $this->Repository->saveAll($insertShopCategory);
     }
+
+
     public function insertProductCategory()
     {
         //Insert all Product Category pair in DB
@@ -205,59 +196,63 @@ class fillDb
             foreach ($value["Category"] as $key => $ss) {
                 if (!in_array($ss, $this->addedCat[$value["Name"]])) {
                     $addedCat[$value["Name"]][] = $ss;
-                    $prodcat = new ProductCategory(false);
-                    $prodcat->productId = $value["Name"];
-                    $prodcat->categoryId = $ss;
+                    $prodcat = new ProductCategory();
+                    //$prodcat->productId = $value["Name"];
+                    //$prodcat->categoryId = $ss;
+                    $prodcat->productId = ["Value" => Products::findId($value["Name"])];
+                    $prodcat->categoryId = ["Value" => Categories::findId($ss)];
                     $insertProdCat[] = $prodcat;
                 }
             }
         }
-        $this->prodcatt->saveAll($insertProdCat);
-
+        $this->Repository->saveAll($insertProdCat);
     }
+
+
     public function insertOrders()
     {
         //Insert all orders in chunks by 5000
         $i = 0;
         $insertOrders = [];
         foreach ($this->result as $key => $value) {
-            $order = new Orders(false);
+            $order = new Orders();
             $order->summa = $value["sum"];
             $order->order_date = $value["date"];
-            $order->shopId = $value["shop_domain"];
-            $order->userId = $value["user_email"];
+            $order->shopId = ["Value" => Shops::findId($value["shop_domain"])];
+            $order->userId = ["Value" => Users::findId($value["user_email"])];
             $insertOrders[] = $order;
             $i++;
-            if ($i == 5000) {
-                $this->orderr->saveAll($insertOrders);
+            if ($i == 1000) {
+                $this->Repository->saveAll($insertOrders);
                 $insertOrders = [];
                 $i = 0;
             }
         }
-        $this->orderr->saveAll($insertOrders);
+        $this->Repository->saveAll($insertOrders);
     }
+
+
     public function insertProductsOrder()
     {
-
         //Insert all products inside Orders in chunks by 5000
         $i = 0;
         $insertProdOrder = [];
         foreach ($this->result as $key => $value) {
             foreach ($value["products"] as $key => $val) {
-                $prodOrd = new ProductOrder(false);
-                $prodOrd->productId = $val["name"];
-                $prodOrd->orderId = ["summa" =>  $value["sum"], "order_date" => $value["date"], "email" => $value["user_email"]];
+                $prodOrd = new ProductOrder();
+                $prodOrd->productId = ["Value" => Products::findId(addslashes($val["name"]))];
+                $usersId = ["Value" => Users::findId($value["user_email"])];
+                $prodOrd->orderId = ["Value" => Orders::findId($value["sum"], $value["date"],  $usersId)];
                 $insertProdOrder[] = $prodOrd;
             }
             $i++;
-            if ($i == 5000) {
-                $this->prodOrdd->saveAll($insertProdOrder);
+            if ($i == 1000) {
+                $this->Repository->saveAll($insertProdOrder);
                 $insertProdOrder = [];
                 $i = 0;
             }
         }
-        $this->prodOrdd->saveAll($insertProdOrder);
-
+        $this->Repository->saveAll($insertProdOrder);
     }
 }
 

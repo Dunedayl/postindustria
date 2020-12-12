@@ -1,15 +1,16 @@
 <?php
-    include_once("entyti.php");
+namespace week3\lib;
 
-    class Categories extends Entity
+class Categories extends Entity
+{
+    protected static $table = "categories";
+
+    protected $id;
+    public $name;
+
+    public static function findId($name)
     {
-        protected static $table = "categories";
-
-        protected $id;
-        public $name;
-
-        public function createTable(){
-            $sql = "CREATE TABLE categories ( id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(200) NOT NULL); ";
-            $this->execute($sql);
-        }
+        $data = "(SELECT id FROM categories where name = '$name')";
+        return $data;
     }
+}

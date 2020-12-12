@@ -1,5 +1,6 @@
 <?php
-include_once("entyti.php");
+
+namespace week3\lib;
 
 class Shops extends Entity
 {
@@ -9,18 +10,9 @@ class Shops extends Entity
     public $name;
     public $domain;
 
-
-    public function createTable()
+    public static function findId($domain)
     {
-        $sql = "
-    CREATE TABLE shops 
-    (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(200) NOT NULL,
-      domain VARCHAR(200) NOT NULL,
-      index idx_dom (domain)
-    );
-";
-        $this->execute($sql);
+        $data = "(SELECT id FROM shops where domain = '$domain')";
+        return $data;
     }
 }

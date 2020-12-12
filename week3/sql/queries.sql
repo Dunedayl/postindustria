@@ -10,13 +10,13 @@ from
   join shopcategory on shops.id = shopcategory.shopId
   join categories on categories.id = shopcategory.categoryId
 where
-	shops.name = "Rite Aid" and categories.name = "Office" and orders.order_date >= YEAR(CURRENT_DATE ()) - 10
+	shops.name = "Rite Aid" and categories.name = "Office" and orders.order_date >= DATE_ADD(CURRENT_DATE(), INTERVAL -10 YEAR) 
 
 2) select names of all categories and count the number of purchases of products from that category
 
 select
   categories.name,
-  count (orders.id)
+  count (productorder.id)
 from
   orders
   join productorder on productorder.orderId = orders.id
@@ -28,49 +28,58 @@ group by
 
 3) select users first/last name who have more then one purchase in "Kroger" shop
 
-select firstname, lastname from users
-where exists (
-  select firstname, lastname, count(users.id) from orders
-	join users on users.id = orders.userId
-    join shops on shops.id = orders.shopId
-    where shops.name = "Kroger" 
-    group by firstname, lastname
-  	having (count (orders.id) > 1) 
-)
+select
+  firstname,
+  lastname
+from
+  orders
+  join users on users.id = orders.userId
+  join shops on shops.id = orders.shopId
+where
+  shops.name = "Kroger"
+group by
+  userId
+having
+  (count (orders.id) > 1)
 
 4) show profit amount per month by particular shop (Might be useful in reporting)
 
 select
-  sum(summa)
+  sum(summa),
+  number_month,
+  number_year
 from
   (
     select
-      orders.summa
+      orders.summa,
+      MONTH(orders.order_date) as number_month,
+      YEAR(orders.order_date) as number_year
     from
       orders
       join shops on shops.id = orders.shopId
     where
       shops.name = "Kroger"
-      and MONTH(orders.order_date) = 4
-      AND YEAR(orders.order_date) = 2012
   ) mothProf
+group by
+  number_month,
+  number_year
 
 5) search a user by its full name oк part of it
-
 
 select
   *
 from
   users
 where
-  firstName like "%Alf%"
-  and lastName like "%Kli%"
+  firstName like "%Alfreda Kli%"
+  or lastName like "%Alfreda Kli%"
+  or concat(firstName, " ", lastName) like "%Alfreda Kli%"
 
 
 6) show amount of all purchases made by a user
 
 select
-  count(orders.id)
+  sum (orders.summa)
 from
   orders
   join users ON users.id = orders.userId

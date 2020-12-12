@@ -1,5 +1,7 @@
 <?php
-include_once("entyti.php");
+
+namespace week3\lib;
+include("entyti.php");
 
 class Users extends Entity
 {
@@ -10,23 +12,8 @@ class Users extends Entity
     public $lastName;
     public $email;
 
-
-    public function createTable()
+    public static function findId($email)
     {
-
-        $sql = "
-CREATE TABLE users 
-(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  firstName VARCHAR(200) NOT NULL,
-  lastName VARCHAR(200) NOT NULL,
-  email VARCHAR(200) NOT NULL,
-index ids_email (email)
-
-)
-;
-
-";
-        $this->execute($sql);
+        return "(SELECT id FROM users where email = '$email')";
     }
 }
