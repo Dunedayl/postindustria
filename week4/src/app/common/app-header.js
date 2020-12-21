@@ -19,7 +19,6 @@ class AppHeader extends WFMComponent {
         let lang = document.getElementById("selector").value
         if (localStorage.getItem('language') == lang) {
         } else {
-            document.cookie = `languabe=${lang}`
             appselecter.render()
             if (document.getElementById("loginPage")) 
             {
