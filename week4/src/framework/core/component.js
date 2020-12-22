@@ -1,77 +1,78 @@
-import { eng, ua } from "../../app/helper/language";
+import { locale } from "../../app/helper/language";
+import { default_locale } from "../../config";
+import { languageSetter } from "../tools/languageSetter";
 
 
-export class Component {
-	
+export class BaseComponent {
+
 	constructor(config) {
 		this.template = config.template;
 		this.selector = config.selector;
-		this.el = null
+		this.element = null
 	}
 
 	render() {
-		this.el = document.querySelector(this.selector)
-		if (!this.el) throw new Error(`Component with selector ${this.selector} wasn't found`)
-		
+
+		this.element = document.querySelector(this.selector)
+		if (!this.element) throw new Error(`BaseComponent with selector ${this.selector} wasn't found`)
+
+		let localization = languageSetter.getlanguage()
+
 		// Unhide hiden item's
 		document.querySelectorAll('.coltohide').forEach(e => e.classList.remove('hidenDiv'))
-		
-		// Localization
-		let lang = "eng"
-		let localization = eng;
-		if (document.getElementById("selector") != null) {
-			lang = document.getElementById("selector").value
-			localStorage.setItem('language', lang)
-		}
-		if (lang === "eng") localization = eng
-		if (lang === "ua") localization = ua
-		
+
 		//Render variables in template 
-		this.el.innerHTML = this.compileTemplate(this.template, localization)
+		this.element.innerHTML = this.fillTemplate(this.compileTemplate(this.template, localization))
 		this._initEvents()
 	}
 
-
-	isUndefined(d) {
-		return typeof d === 'undefined'
-	}
-
+	//Init on click events in views
 	_initEvents() {
-		if (this.isUndefined(this.events)) return
-		let events = this.events()
+		const events = this.events();
 
-		Object.keys(events).forEach(key => {
-			let listener = key.split(' ')
-
-			this.el
-				.querySelector(listener[1])
-				.addEventListener(listener[0], this[events[key]].bind(this))
-		})
+		Object.values(events).forEach(key => {
+			const elements = document.querySelectorAll(key.selector);
+			elements.forEach(element => {
+				element.addEventListener(key.type, key.handler.bind(this))
+			})
+		});
 	}
 
+	//Replace vars in template with language
 	compileTemplate(template, localization) {
 
 		let regex = /\{{(.*?)}}/g
 
 		template = template.replace(regex, (str, d) => {
 			let key = d.trim()
-			if (key == "username") {
-				let firstname = localStorage.getItem('firstname')
-				let lastname = localStorage.getItem('lastname')
-				let username = firstname + " " + lastname
-				return username
-			} 
 			return localization[key]
 		})
 		return template
 	}
-	
 
-	validateEmail(mail) {
-		if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
-			return (true)
-		}
-		return (false)
+	//Fill template with data from local storage
+	fillTemplate(template) {
+		let regex = /\{%(.*?)%}/g
+
+		template = template.replace(regex, (str, d) => {
+			let key = d.trim()
+			let username = localStorage.getItem(key)
+			return username
+		})
+		return template
+	}
+
+	onInit() {
+		// Events before form render
+	}
+
+	afterInit() {
+		// Events after form render
+	}
+
+	events() {
+		// Events of component
+		return []
 	}
 }
 

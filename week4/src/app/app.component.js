@@ -1,16 +1,16 @@
-import { WFMComponent } from '../framework/index';
+import { BaseComponent } from '../framework/index';
 import { router } from '../framework/tools/router'
 import { loginComponent } from './pages/login-page.componnent';
 import { signupComponent } from './pages/signup-page.component';
 
 
-class AppComponent extends WFMComponent {
+class AppComponent extends BaseComponent {
 	constructor(config) {
 		super(config)
 	}
 
 	events() {
-		return {}
+		return []
 	}
 }
 
@@ -18,7 +18,6 @@ export const appComponent = new AppComponent({
 	selector: 'app-root',
 	template: `
 
- 
         <div class="row">
 
             <div class="col s12">

@@ -1,4 +1,5 @@
-export const eng = {
+export const locale = {
+"eng_US" : { 
 	hello: "Hello",
 	email: "Email",
 	logIn: "Log In",
@@ -32,9 +33,8 @@ export const eng = {
 	invCheckBox: "Please checke checkbox",
 	GetStarted: "Get Started",
 	TestPage: "Test auth page"
-}
-
-export const ua = {
+	},
+"ua_UA" : {
 	hello: "Привіт",
 	email: "Імейл",
 	logIn: "Увійти",
@@ -68,5 +68,6 @@ export const ua = {
 	invCheckBox: "Оберіть чекбокс",
 	TestPage: "Тестова сторінка",
 	GetStarted: "Почати",
+	}
 }
 

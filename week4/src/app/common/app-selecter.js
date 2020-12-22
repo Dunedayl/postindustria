@@ -1,30 +1,34 @@
-import { router, WFMComponent } from '../../framework/index';
+import { router, BaseComponent } from '../../framework/index';
 import { appComponent } from '../app.component';
 import { loginComponent } from '../pages/login-page.componnent';
 import { signupComponent } from '../pages/signup-page.component';
 
-class AppSelecter extends WFMComponent {
+class AppSelecter extends BaseComponent {
     constructor(config) {
         super(config)
     }
 
     events() {
-        return {
-            'click .logIn': 'onNavLog',
-            'click .signUp': 'onNavSign',
-        }
+        return [
+            {
+                type: 'click',
+                selector: '.logIn',
+                handler: (e) => this.onNavLog(e)
+            },
+            {
+                type: 'click',
+                selector: '.signUp',
+                handler: (e) => this.onNavSign(e)
+            }
+        ]
     }
 
     onNavLog(event) {
-        this.el.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
-        event.target.classList.add('active')
         event.preventDefault()
         router.navigate('/auth/login')
     }
 
     onNavSign(event) {
-        this.el.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
-        event.target.classList.add('active')
         event.preventDefault()
         router.navigate('/auth/register')
     }
@@ -35,7 +39,7 @@ export const appselecter = new AppSelecter({
     template: `
     <div>
         <div class="tab coltohide">
-        <button id = "LogInpId" class="logIn tablinks active">{{logIn}}</button>
+        <button id = "LogInId" class="logIn tablinks active">{{logIn}}</button>
         <button id = "signUpId" class="signUp tablinks">{{signUp}}</button>
         </div>
     </div>

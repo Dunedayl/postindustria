@@ -86,9 +86,7 @@ h4 {
 }
 
 /* The Close Button */
-.close,
-.close2,
-.close3 {
+.close{
   color: red;
   float: right;
   font-size: 28px;

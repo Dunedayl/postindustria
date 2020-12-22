@@ -1,67 +1,41 @@
-import { WFMComponent } from '../../framework/index'
+import { BaseComponent } from '../../framework/index'
 import { router } from '../../framework/tools/router'
+import { validateSignUpForm } from '../helper/validators'
 
-class SignupComponent extends WFMComponent {
+class SignupComponent extends BaseComponent {
 	constructor(config) {
 		super(config)
 	}
 
 	events() {
-		return {
-			"click .btn": "onClick"
-		}
+		return [
+			{
+				type: 'click',
+				selector: '.singUpButton',
+				handler: (e) => this.onClick(e)
+			}
+		]
 	}
 
-	onClick({ target }) {
-		
-		let valid = true 
-		let firstname = this.el.querySelector('#firstname').value;
-		let lastname = this.el.querySelector('#lastname').value;
-		let email = this.el.querySelector('#email').value;
-		let password = this.el.querySelector('#psw').value;
-		
-		if (document.getElementById('checkBox').checked) {
-			document.getElementById("notificationCheckBox").classList.add("hidenP")
-		} else {
-			valid = false 
-			document.getElementById("notificationCheckBox").classList.remove("hidenP")
-		}
-		
-		if (firstname != "") {
-			document.getElementById("notificationFirstname").classList.add("hidenP")
+	afterInit() {
+		document.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
+		document.getElementById("signUpId").classList.add('active')
+	}
 
-		} else {
-			valid = false
-			document.getElementById("notificationFirstname").classList.remove("hidenP")
-		}
-		
-		if (lastname != "") {
-			document.getElementById("notificationLastName").classList.add("hidenP")
+	onClick(event) {
 
-		} else {
-			valid = false
-			document.getElementById("notificationLastName").classList.remove("hidenP")
-		}
-		
-		if (this.validateEmail(email)) {
-			document.getElementById("notificationEmail").classList.add("hidenP")
+		event.preventDefault()
 
-		} else {
-			valid = false
-			document.getElementById("notificationEmail").classList.remove("hidenP")
-		}
-		
-		if (password.length  > 5) {
-			document.getElementById("notificationPassword").classList.add("hidenP")
+		let firstname = this.element.querySelector('#firstname').value;
+		let lastname = this.element.querySelector('#lastname').value;
+		let email = this.element.querySelector('#email').value;
+		let password = this.element.querySelector('#psw').value;
 
-		} else {
-			valid = false
-			document.getElementById("notificationPassword").classList.remove("hidenP")
-		}
-		
+		let valid = validateSignUpForm(firstname, lastname, email, password)
+
+
 		if (valid) {
-			localStorage.setItem('firstname', firstname);
-			localStorage.setItem('lastname', lastname);
+			localStorage.setItem('username', firstname + " " + lastname)
 			router.navigate('/home')
 		}
 	}
@@ -70,6 +44,7 @@ class SignupComponent extends WFMComponent {
 export const signupComponent = new SignupComponent({
 	selector: "app-signup-page",
 	template: `
+	<form  class = "mySignUpForm">
 		<div id = "signupPage">
 			
 			  <div class = "my-form">
@@ -82,7 +57,7 @@ export const signupComponent = new SignupComponent({
 				<input class = "my-input" type="text" placeholder="{{EnterLastName}}" name="lastname" id="lastname" required />
 					<p class = "notification hidenP" id="notificationLastName">{{invLastName}}</p>
 				<label for="email"><b>{{EnterEmail}}</b></label>
-				<input class = "my-input" type="text" placeholder="{{EnterEmail}}" name="email" id="email" required />
+				<input class = "my-input" type="email" placeholder="{{EnterEmail}}" name="email" id="email" required />
 					<p class = "notification hidenP" id="notificationEmail">{{invEmail}}</p>
 				<label for="psw"><b>{{EnterPassword}}</b></label>
 				<input class = "my-input" type="password" placeholder="{{EnterPassword}}" name="psw" id="psw" required />
@@ -99,9 +74,9 @@ export const signupComponent = new SignupComponent({
 				  </label>
 					<p class = "notification hidenP" id="notificationCheckBox">{{invCheckBox}}</p>
 				</p>
-				<button type="submit" class="waves-effect waves-light btn">{{GetStarted}}</button>
+				<button type="submit" class="waves-effect waves-light btn singUpButton">{{GetStarted}}</button>
 			  </div>
-			
 		</div>
+	</form>
 	`,
 });
