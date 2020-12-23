@@ -18,10 +18,7 @@ export class BaseComponent {
 
 		let localization = languageSetter.getlanguage()
 
-		// Unhide hiden item's
-		document.querySelectorAll('.coltohide').forEach(e => e.classList.remove('hidenDiv'))
-
-		//Render variables in template 
+		//Render lokalization and variables in template 
 		this.element.innerHTML = this.fillTemplate(this.compileTemplate(this.template, localization))
 		this._initEvents()
 	}

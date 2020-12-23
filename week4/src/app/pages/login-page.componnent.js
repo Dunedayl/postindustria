@@ -40,13 +40,15 @@ class LoginComponent extends BaseComponent {
     afterInit() {
         document.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
         document.getElementById("LogInId").classList.add('active')
+        // Unhide hiden item's
+        document.querySelectorAll('.coltohide').forEach(e => e.classList.remove('hidenDiv'))
     }
 
     onClickLogin() {
 
         let email = this.element.querySelector('#email').value;
         let password = this.element.querySelector('#psw').value;
-
+        
         let valid = validateLogInForm(email, password)
 
         if (valid) {
@@ -67,15 +69,7 @@ class LoginComponent extends BaseComponent {
     }
 
     spanClick(event) {
-
-        let modal = document.getElementById("email-modal");
-        modal.style.display = "none";
-
-        modal = document.getElementById("myModal");
-        modal.style.display = "none";
-
-        modal = document.getElementById("succesEmail");
-        modal.style.display = "none";
+        document.querySelectorAll('.modal').forEach(e => e.style.display = "none");
     }
 
     forgotPassClick(event) {

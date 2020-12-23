@@ -23,6 +23,11 @@ class AppSelecter extends BaseComponent {
         ]
     }
 
+    afterInit() {
+        // Unhide hiden item's
+        document.querySelectorAll('.coltohide').forEach(e => e.classList.remove('hidenDiv'))
+    }
+
     onNavLog(event) {
         event.preventDefault()
         router.navigate('/auth/login')

@@ -20,6 +20,9 @@ class SignupComponent extends BaseComponent {
 	afterInit() {
 		document.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
 		document.getElementById("signUpId").classList.add('active')
+		
+		// Unhide hiden item's
+		document.querySelectorAll('.coltohide').forEach(e => e.classList.remove('hidenDiv'))
 	}
 
 	onClick(event) {
@@ -32,7 +35,6 @@ class SignupComponent extends BaseComponent {
 		let password = this.element.querySelector('#psw').value;
 
 		let valid = validateSignUpForm(firstname, lastname, email, password)
-
 
 		if (valid) {
 			localStorage.setItem('username', firstname + " " + lastname)
