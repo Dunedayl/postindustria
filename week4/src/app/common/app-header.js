@@ -1,3 +1,4 @@
+import { default_locale } from '../../config';
 import { router, BaseComponent } from '../../framework/index';
 import { appComponent } from '../app.component';
 import { loginComponent } from '../pages/login-page.componnent';
@@ -21,7 +22,13 @@ class AppHeader extends BaseComponent {
 
     afterInit() {
         let storedItem = localStorage.getItem('language')
-        document.getElementById("selector").value = storedItem
+
+        if (storedItem != null) {
+            document.getElementById("selector").value = storedItem
+        } else {
+            document.getElementById("selector").value = default_locale
+        }
+
     }
 
     onSelectLang() {
