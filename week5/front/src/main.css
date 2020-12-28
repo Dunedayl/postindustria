@@ -1,0 +1,115 @@
+.tab {
+  overflow: hidden;
+  align-items: center;
+  align-content: center;
+  align-self: center;
+}
+
+h4 {
+
+  justify-content: center;
+  text-align: center;
+}
+
+.tab button {
+  background-color: Transparent;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 20px;
+  color: green;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: white;
+  color: #800080;
+  text-decoration:underline;
+  font-size: 20px;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.tabcontentShow {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.hidenDiv {
+  display: none;
+}
+
+.hidenP {
+  display: none;
+}
+
+.notification {
+  color: red;
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close{
+  color: red;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forgotPass {
+margin: 5px;
+margin-bottom: 5px;
+}
+
+.selecterLang {
+border-color: #800080;
+margin: 5px;
+position:relative;
+left: 200px;
+width: max-content;
+
+}
