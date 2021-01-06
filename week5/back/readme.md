@@ -21,3 +21,4 @@
 4) Прописать в файле /etc/hosts адреса виртуальных хостов
 127.0.0.1       restapi.loc     www.restapi.loc
 ::1     restapi.loc     www.restapi.loc
+5) Создать файл автозагрузки классов командой composer dump-autoload -o
