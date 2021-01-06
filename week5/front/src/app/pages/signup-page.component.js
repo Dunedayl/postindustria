@@ -17,6 +17,22 @@ class SignupComponent extends BaseComponent {
 		]
 	}
 
+	onInit() {
+		console.log("SingUp Init")
+		axios({
+			method: 'get',
+			withCredentials: true,
+			url: 'http://restapi.loc/check',
+		}).then((response) => {
+			console.log("response.data");
+			console.log(response);
+			router.navigate('/home')
+		}).catch(err => {
+			console.log("catch");
+			console.log(err.response.data)
+		})
+	}
+
 	afterInit() {
 		document.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
 		document.getElementById("signUpId").classList.add('active')
@@ -37,8 +53,29 @@ class SignupComponent extends BaseComponent {
 		let valid = validateSignUpForm(firstname, lastname, email, password)
 
 		if (valid) {
-			localStorage.setItem('username', firstname + " " + lastname)
-			router.navigate('/home')
+			axios({
+				method: 'put',
+				withCredentials: true,
+				url: 'http://restapi.loc/signup',
+				data: {
+					"firstname": firstname,
+					"lastname": lastname,
+					"email": email,
+					"password": password
+				}
+			}).then((response) => {
+				console.log(response);
+			}, (error) => {
+				valid = false
+				console.log(error);
+				document.getElementById("notificationEmailUsed").classList.remove("hidenP")
+			}).finally(() => {
+				if (valid == true) {
+					router.navigate('/home')
+				}
+			});
+
+			//localStorage.setItem('username', firstname + " " + lastname)
 		}
 	}
 }
@@ -61,6 +98,7 @@ export const signupComponent = new SignupComponent({
 				<label for="email"><b>{{EnterEmail}}</b></label>
 				<input class = "my-input" type="email" placeholder="{{EnterEmail}}" name="email" id="email" required />
 					<p class = "notification hidenP" id="notificationEmail">{{invEmail}}</p>
+					<p class = "notification hidenP" id="notificationEmailUsed">{{usedEmail}}</p>
 				<label for="psw"><b>{{EnterPassword}}</b></label>
 				<input class = "my-input" type="password" placeholder="{{EnterPassword}}" name="psw" id="psw" required />
 					<p class = "notification hidenP" id="notificationPassword">{{invPsw}}</p>

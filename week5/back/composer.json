@@ -1,0 +1,8 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Week5\\": "src/",
+      "Config\\": "config/"
+    }
+  }
+}

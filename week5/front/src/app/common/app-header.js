@@ -18,7 +18,7 @@ class AppHeader extends BaseComponent {
                 handler: (e) => this.onSelectLang(e)
             }
         ]
-    }e
+    }
 
     afterInit() {
         let storedItem = localStorage.getItem('language')

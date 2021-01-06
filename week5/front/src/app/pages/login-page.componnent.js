@@ -37,6 +37,22 @@ class LoginComponent extends BaseComponent {
         ]
     }
 
+    onInit() {
+
+        axios({
+            method: 'get',
+            withCredentials: true,
+            url: 'http://restapi.loc/check',
+        }).then((response) => {
+            console.log("response.data");
+            console.log(response);
+            router.navigate('/home')
+        }).catch(err => {
+            console.log("catch");
+            console.log(err.response.data)
+        })
+    }
+
     afterInit() {
         document.querySelectorAll('.tablinks').forEach(e => e.classList.remove('active'))
         document.getElementById("LogInId").classList.add('active')
@@ -48,11 +64,26 @@ class LoginComponent extends BaseComponent {
 
         let email = this.element.querySelector('#email').value;
         let password = this.element.querySelector('#psw').value;
-        
-        let valid = validateLogInForm(email, password)
+
+        //let valid = validateLogInForm(email, password)
+        let valid = true
 
         if (valid) {
-            router.navigate('/home')
+
+            axios({
+                method: 'post',
+                withCredentials: true,
+                url: 'http://restapi.loc/auth',
+                auth: {
+                    username: email,
+                    password: password
+                }
+            }).then((response) => {
+                router.navigate('/home')
+            }).catch(err => {
+                document.getElementById("notificationLogin").classList.remove("hidenP")
+                console.log(err.response.data)
+            })
         }
     }
 
@@ -151,7 +182,6 @@ export const loginComponent = new LoginComponent({
                         <button type="submit" class="waves-effect waves-light btn sendEmail">{{sendEmai}}</button>
                     </div>
             </div>
-
     </div>
     `,
 });

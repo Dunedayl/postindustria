@@ -30,6 +30,8 @@ export function validateSignUpForm(firstname, lastname, email, password) {
 		document.getElementById("notificationLastName").classList.remove("hidenP")
 	}
 
+	document.getElementById("notificationEmailUsed").classList.add("hidenP")
+
 	if (validateEmail(email)) {
 		document.getElementById("notificationEmail").classList.add("hidenP")
 	} else {

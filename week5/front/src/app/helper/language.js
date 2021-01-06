@@ -32,7 +32,9 @@ export const locale = {
 	invPsw: "Password mustbe at list 6 characters long",
 	invCheckBox: "Please checke checkbox",
 	GetStarted: "Get Started",
-	TestPage: "Test auth page"
+	TestPage: "Test auth page",
+	usedEmail: "Email is already used",
+	LogOut: "Log Out"
 	},
 "ua_UA" : {
 	hello: "Привіт",
@@ -68,6 +70,8 @@ export const locale = {
 	invCheckBox: "Оберіть чекбокс",
 	TestPage: "Тестова сторінка",
 	GetStarted: "Почати",
+	usedEmail: "Імейл уже зареєстровано",
+	LogOut: "Вийти"
 	}
 }
 
