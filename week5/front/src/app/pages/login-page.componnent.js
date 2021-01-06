@@ -38,7 +38,7 @@ class LoginComponent extends BaseComponent {
     }
 
     onInit() {
-
+        // Check for user auth token if tocken is set and valid redirect to home 
         axios({
             method: 'get',
             withCredentials: true,
@@ -68,6 +68,7 @@ class LoginComponent extends BaseComponent {
         //let valid = validateLogInForm(email, password)
         let valid = true
 
+        // LogIn using API
         if (valid) {
 
             axios({

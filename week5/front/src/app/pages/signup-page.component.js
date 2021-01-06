@@ -18,6 +18,7 @@ class SignupComponent extends BaseComponent {
 	}
 
 	onInit() {
+		// Check for user auth token if tocken is set and valid redirect to home 
 		console.log("SingUp Init")
 		axios({
 			method: 'get',
@@ -52,6 +53,7 @@ class SignupComponent extends BaseComponent {
 
 		let valid = validateSignUpForm(firstname, lastname, email, password)
 
+		// Registrate using API
 		if (valid) {
 			axios({
 				method: 'put',
@@ -64,16 +66,11 @@ class SignupComponent extends BaseComponent {
 					"password": password
 				}
 			}).then((response) => {
-				console.log(response);
-			}, (error) => {
-				valid = false
-				console.log(error);
+				router.navigate('/home')
+			}).catch(err => {
 				document.getElementById("notificationEmailUsed").classList.remove("hidenP")
-			}).finally(() => {
-				if (valid == true) {
-					router.navigate('/home')
-				}
-			});
+				console.log(err.response.data)
+			})
 
 			//localStorage.setItem('username', firstname + " " + lastname)
 		}

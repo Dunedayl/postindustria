@@ -45,8 +45,6 @@ class HomeComponent extends BaseComponent {
 			console.log(response.data);
 			firstname = response.data.firstname
 			lastname = response.data.lastname
-			console.log(firstname);
-			console.log(lastname);
 			let username = "Hello " + firstname + " " + lastname + "!"
 			document.getElementById("username").innerHTML = username;
 		}).catch(err => {
