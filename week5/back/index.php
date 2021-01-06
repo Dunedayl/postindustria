@@ -1,7 +1,5 @@
 <?php
 
-
-
 use Week5\api\Authenticate;
 use Week5\api\LogIn;
 use Week5\api\LogOut;
@@ -11,9 +9,6 @@ use Week5\database\Database;
 
 require_once("vendor/autoload.php");
 
-
-
-$datb = new Database();
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	// Geting user first and last name 

@@ -21,5 +21,3 @@
 4) Прописать в файле /etc/hosts адреса виртуальных хостов
 127.0.0.1       restapi.loc     www.restapi.loc
 ::1     restapi.loc     www.restapi.loc
-127.0.0.1       front.loc       www.front.loc
-::1     front.loc       www.front.loc

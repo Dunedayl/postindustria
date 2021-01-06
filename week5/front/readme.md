@@ -15,3 +15,7 @@
 	ErrorLog ${APACHE_LOG_DIR}/resterror.log
 	CustomLog ${APACHE_LOG_DIR}/restaccess.log combined
 </VirtualHost>
+
+2) Прописать в файле /etc/hosts адреса виртуальных хостов
+127.0.0.1       front.loc       www.front.loc
+::1     front.loc       www.front.loc

@@ -26,11 +26,11 @@
 				$this->succes();
 				return $value["id"];
 			} else {
-				$this->error($this->sessionId, $data["sessionId"]);
+				$this->error();
 			}
 		}
 
-		private function error($data0, $data1)
+		private function error()
 		{
 			http_response_code(401);
 			header("Content-type: json.application");
