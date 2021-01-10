@@ -31,6 +31,7 @@ class LogIn {
 		$query = 'INSERT INTO Sessions (sessionId, userId, expiry_date) values ("' . $hashed_sessionId . '", ' . $userId .  ',"' . $this->date . '" )';
 		$this->database->query($query);
 		header("Set-Cookie:sessionId={$this->sessionId}; Expires={$this->date}; SameSite=None; Path='/'; HttpOnly");
+
 	}
 
 

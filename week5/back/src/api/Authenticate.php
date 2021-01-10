@@ -19,7 +19,7 @@
 			foreach ($data as $value) {
 				if (password_verify($this->sessionId, $value["sessionId"])) {
 					$hashedSessionId = $value["id"];
-					$this->succes();
+
 				}
 			}
 			if ($hashedSessionId != null) {

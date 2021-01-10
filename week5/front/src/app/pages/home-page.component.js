@@ -1,3 +1,4 @@
+import { urlHome, urlLogOut } from '../../config';
 import { BaseComponent } from '../../framework/index'
 import { router } from '../../framework/tools/router'
 
@@ -22,7 +23,7 @@ class HomeComponent extends BaseComponent {
 		axios({
 			method: 'post',
 			withCredentials: true,
-			url: 'http://restapi.loc/logout'
+			url: urlLogOut,
 		}).then((response) => {
 			router.navigate('')
 		}).catch(err => {
@@ -40,7 +41,7 @@ class HomeComponent extends BaseComponent {
 		axios({
 			method: 'get',
 			withCredentials: true,
-			url: 'http://restapi.loc/home',
+			url: urlHome,
 		}).then((response) => {
 			console.log(response.data);
 			firstname = response.data.firstname

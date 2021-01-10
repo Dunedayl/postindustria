@@ -1,60 +1,54 @@
 <?php
 
 use Week5\api\Authenticate;
+use Week5\api\Check;
 use Week5\api\LogIn;
 use Week5\api\LogOut;
 use Week5\api\Registrate;
 use Week5\api\User;
-use Week5\database\Database;
+use Week5\routing\Request;
+use Week5\routing\Router;
 
 require_once("vendor/autoload.php");
 
 
-if ($_SERVER['REQUEST_METHOD'] == "GET") {
-	// Geting user first and last name 
-	if ($_GET['url'] == "home") {
-		$user = new User();
-	} else if ($_GET['url'] == "check") {
-	// Check if cookie is valid 
-		if ($_SERVER['HTTP_COOKIE']) {
-			$coockie = explode("=", $_SERVER['HTTP_COOKIE']);
-			$sessionId = $coockie[1];
-			$auth = new Authenticate($sessionId);
-			$auth->logIn();
-		}
-	}
-} else if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	// Log in with username and password
-	if ($_GET['url'] == "auth") {
+header('Access-Control-Allow-Origin: http://front.loc');
+header('Access-Control-Allow-Methods: PUT, GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, authorization');
+header('Access-Control-Expose-Headers: "*"');
+header('Access-Control-Allow-Credentials: true');
 
-		$postBody = file_get_contents("php://input");
-		$postBody = json_decode($postBody);
 
-		$email = $_SERVER['PHP_AUTH_USER'];
-		$password = $_SERVER['PHP_AUTH_PW'];
+$router = new Router(new Request);
 
-		$auth = new LogIn($email, $password);
-	// Log out 
-	} else if ($_GET['url'] == "logout") {
+$router->get('/home', function($request) {
+	$user = new User();
+});
 
-		$logout = new LogOut();
 
-	}
+$router->get('/check', function ($request) {
+	$check = new Check();
+});
 
-} else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
-	// Registrate new user
-	if ($_GET['url'] == "signup") {
-		
 
-		$postBody = file_get_contents("php://input");
-		$postBody = json_decode($postBody);
+$router->post('/auth', function ($request) {
+	$auth = new LogIn($request->phpAuthUser, $request->phpAuthPw);
+});
 
-		$firstname = $postBody->firstname;
-		$lastname = $postBody->lastname;
-		$email = $postBody->email;
-		$password = $postBody->password;
 
-		$registrate = new Registrate($firstname, $lastname, $email, $password);
+$router->post('/logout', function ($request) {
+	$logout = new LogOut();
+});
 
-	}
-}
+
+$router->put('/signup', function ($request) {
+	$registrate = new Registrate();
+});
+
+
+$router->options('/auth', function () {
+});
+
+
+$router->options('/signup', function () {
+});

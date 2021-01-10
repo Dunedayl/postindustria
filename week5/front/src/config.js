@@ -1,1 +1,6 @@
 export const default_locale = "eng_US"
+export const urlLogOut = "http://restapi.loc/logout"
+export const urlCheck = "http://restapi.loc/check"
+export const urlSignup = "http://restapi.loc/signup"
+export const urlAuth = "http://restapi.loc/auth"
+export const urlHome = "http://restapi.loc/home"

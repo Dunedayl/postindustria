@@ -1,3 +1,4 @@
+import { urlCheck, urlSignup } from '../../config'
 import { BaseComponent } from '../../framework/index'
 import { router } from '../../framework/tools/router'
 import { validateSignUpForm } from '../helper/validators'
@@ -23,7 +24,7 @@ class SignupComponent extends BaseComponent {
 		axios({
 			method: 'get',
 			withCredentials: true,
-			url: 'http://restapi.loc/check',
+			url: urlCheck,
 		}).then((response) => {
 			console.log("response.data");
 			console.log(response);
@@ -58,7 +59,7 @@ class SignupComponent extends BaseComponent {
 			axios({
 				method: 'put',
 				withCredentials: true,
-				url: 'http://restapi.loc/signup',
+				url: urlSignup,
 				data: {
 					"firstname": firstname,
 					"lastname": lastname,

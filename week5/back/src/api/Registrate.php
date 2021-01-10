@@ -10,13 +10,17 @@ class Registrate
 	private $database;
 
 
-	public function __construct($firstname, $lastname, $email, $password)
+	public function __construct()
 	{
+		$postBody = file_get_contents("php://input");
+		$postBody = json_decode($postBody);
+
+
 		$this->database = new Database();
-		$this->firstname = $firstname;
-		$this->lastname = $lastname;
-		$this->email = $email;
-		$this->password = $password;
+		$this->firstname = $postBody->firstname;
+		$this->lastname = $postBody->lastname;
+		$this->email = $postBody->email;
+		$this->password = $postBody->password;
 
 		$this->validate();
 		$this->checkEmail();

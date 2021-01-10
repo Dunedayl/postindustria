@@ -1,3 +1,4 @@
+import { urlAuth, urlCheck } from '../../config'
 import { BaseComponent } from '../../framework/index'
 import { router } from '../../framework/tools/router'
 import { validateLogInForm, validateEmail, validatePhone } from '../helper/validators'
@@ -42,7 +43,7 @@ class LoginComponent extends BaseComponent {
         axios({
             method: 'get',
             withCredentials: true,
-            url: 'http://restapi.loc/check',
+            url: urlCheck,
         }).then((response) => {
             console.log("response.data");
             console.log(response);
@@ -74,7 +75,7 @@ class LoginComponent extends BaseComponent {
             axios({
                 method: 'post',
                 withCredentials: true,
-                url: 'http://restapi.loc/auth',
+                url: urlAuth,
                 auth: {
                     username: email,
                     password: password
