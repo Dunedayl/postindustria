@@ -66,10 +66,10 @@
                   aria-label="Default select example"
                   v-model="$store.state.homeSelector"
                   @change="
-                    $store.commit(
-                      'getExchangeRate',
-                      this.$store.state.exchangeSelectedCurrency
-                    )
+                    $store.commit('getExchangeRate', {
+                      currency: this.$store.state.exchangeSelectedCurrency,
+                      date: this.$store.state.today,
+                    })
                   "
                 >
                   <option value="" disabled selected>Select</option>
@@ -110,10 +110,10 @@
                         id="currency"
                         v-model="this.$store.state.selected"
                         @change="
-                          $store.commit(
-                            'getExchangeRate',
-                            this.$store.state.selected.currency
-                          )
+                          $store.commit('getExchangeRate', {
+                            currency: this.$store.state.selected.currency,
+                            date: this.$store.state.today,
+                          })
                         "
                       >
                         <option
@@ -174,12 +174,12 @@
                       <input
                         type="date"
                         id="ForceExchangeIncomeDate"
-                        v-model="this.$store.state.exdate"
+                        v-model="this.$store.state.incomeForceExchange"
                         @change="
-                          $store.commit(
-                            'getExchangeRate',
-                            this.$store.state.selected.currency
-                          )
+                          $store.commit('getExchangeRate', {
+                            currency: this.$store.state.selected.currency,
+                            date: this.$store.state.incomeForceExchange,
+                          })
                         "
                         :max="this.$store.state.maxDate"
                         required
@@ -273,12 +273,13 @@
                       <input
                         type="date"
                         id="exchangeDate"
-                        v-model="this.$store.state.exdate"
+                        v-model="this.$store.state.exchangeDate"
                         @change="
-                          $store.commit(
-                            'getExchangeRate',
-                            this.$store.state.exchangeSelectedCurrency
-                          )
+                          $store.commit('getExchangeRate', {
+                            currency: this.$store.state
+                              .exchangeSelectedCurrency,
+                            date: this.$store.state.exchangeDate,
+                          })
                         "
                         :max="this.$store.state.maxDate"
                         required
@@ -372,12 +373,13 @@
                       <input
                         type="date"
                         id="exchangeDate"
-                        v-model="this.$store.state.incomeDate"
+                        v-model="this.$store.state.forceExchangeDate"
                         @change="
-                          $store.commit(
-                            'getExchangeRate',
-                            this.$store.state.exchangeSelectedCurrency
-                          )
+                          $store.commit('getExchangeRate', {
+                            currency: this.$store.state
+                              .exchangeSelectedCurrency,
+                            date: this.$store.state.forceExchangeDate,
+                          })
                         "
                         :max="this.$store.state.maxDate"
                         required
@@ -392,7 +394,7 @@
                       <input
                         type="date"
                         id="dateForceExchange"
-                        v-model="this.$store.state.exdate"
+                        v-model="this.$store.state.forceExchangeIncomeDate"
                         :max="this.$store.state.maxDate"
                         required
                       />
@@ -455,7 +457,9 @@
 <script>
 export default {
   name: "HomeBody",
-  beforeCreate() {},
+  beforeCreate() {
+    this.$store.commit("setToday");
+  },
   components: {},
   methods: {
     close() {},

@@ -14,7 +14,6 @@ export default createStore({
             image: "https://www.w3schools.com/howto/img_avatar.png"
         },
         updateUserData: "",
-        incomeDate: "",
         uploadImage: "",
         default_currency: "",
         isLogged: "false",
@@ -24,8 +23,6 @@ export default createStore({
         to: "",
         report: "",
         tax: "",
-        date: "",
-        exdate: "",
         maxDate: "",
         first: "",
         last: "",
@@ -43,7 +40,14 @@ export default createStore({
         exchangeLabel: "",
         receiveImage: "",
         homeSelector: "",
-        label: []
+        label: [],
+        exchageDate: "",
+        incomeDate: "",
+        incomeForceExchange: "",
+        forceExchangeIncomeDate: "",
+        forceExchangeDate: "",
+        today: "",
+        dateForRate: ""
     },
     getters: {
     },
@@ -55,18 +59,23 @@ export default createStore({
             var yyyy = today.getFullYear();
 
             today = yyyy + '-' + mm + '-' + dd
-            this.state.date = today;
             this.state.from = today;
             this.state.to = today;
-            this.state.exdate = today;
             this.state.maxDate = today;
-        },
-        getExchangeRate(state, currency) {
+            this.state.today = today;
+            this.state.exchangeDate = today;
+            this.state.incomeDate = today;
+            this.state.incomeForceExchange = today;
+            this.state.forceExchangeIncomeDate = today;
+            this.state.forceExchangeDate = today;
+            
 
-            if (currency != "UAH") {
-                this.state.exchangeCurrency = currency;
-                this.state.exchangeDate = this.state.exdate;
-                this.state.incomeDate = this.state.exdate;
+        },
+        getExchangeRate(state, data) {
+
+            if (data["currency"] != "UAH") {
+                this.state.exchangeCurrency = data["currency"];
+                this.state.dateForExchange = data["date"];
                 this.dispatch("getRate");
             }
         },
@@ -97,8 +106,10 @@ export default createStore({
 
         },
         getRate() {
+
+            console.log()
             axios
-                .get("api/rate/" + this.state.exchangeDate + "/" + this.state.exchangeCurrency)
+                .get("api/rate/" + this.state.dateForExchange + "/" + this.state.exchangeCurrency)
                 .then((response) => {
                     this.state.exchangeRate = response.data
                 }).catch((error) => {
@@ -196,8 +207,9 @@ export default createStore({
                     currency: this.state.exchangeCurrency
                 })
                 .then((response) => {
+                    console.log(response.data)
+                    this.state.label = []
                     response.data.data.forEach(element => {
-                        this.state.label = []
                         this.state.label.push(element.info)
                     });
                     this.commit("showModal");
@@ -213,8 +225,8 @@ export default createStore({
                 .post("api/action/forceExchage", {
                     sum: this.state.exchangeSum,
                     date: this.state.incomeDate,
-                    exchangeDate: this.state.exchangeDate,
-                    currency: this.state.exchangeCurrency
+                    exchangeDate: this.state.forceExchangeDate,
+                    currency: this.state.forceExchangeIncomeDate
                 })
                 .then((response) => {
                     this.state.label = []
@@ -234,8 +246,8 @@ export default createStore({
                 .post("api/action/store", {
                     action: "Income",
                     sum: this.state.incomeSum,
-                    date: this.state.date,
-                    exchangeDate: this.state.date,
+                    date: this.state.incomeDate,
+                    exchangeDate: this.state.incomeForceExchange,
                     currency: this.state.selected.currency
                 })
                 .then((response) => {
