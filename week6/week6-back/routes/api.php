@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/email', [UserController::class, 'email'])->middleware('auth:api');
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);

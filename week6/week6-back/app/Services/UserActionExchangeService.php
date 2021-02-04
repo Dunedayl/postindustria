@@ -81,7 +81,7 @@ class UserActionExchangeService
 
 
                 if ($rateDifference >= 1) {
-                    $info = "Income from rate difference $rayts at the dates of reciving $days and rate at the day of exhange $request->date with rate $rateAtTheDayOfExchange";
+                    $info = " Income $rateDifference {$this->user->default_currency} from rate difference $rayts at the dates of reciving $days and rate at the day of exhange $request->date with rate $rateAtTheDayOfExchange";
                     $this->return[] = $this->writeToUserAction("Rate difference income", $rateDifference, $this->user->default_currency, $info);
                     break;
                 }
@@ -98,7 +98,8 @@ class UserActionExchangeService
             }
         }
 
-        $info = "Income from exchange $request->sum $request->currency with rate $rateAtTheDayOfExchange";
+        $formatedUahNow = number_format($sumUahNow / 100, 2);
+        $info = "Income {$formatedUahNow} {$this->user->default_currency} from exchange $request->sum $request->currency with rate $rateAtTheDayOfExchange";
         $this->return[] = $this->writeToUserAction("Exchange income", $sumUahNow, $this->user->default_currency, $info);
 
         return $this->return;

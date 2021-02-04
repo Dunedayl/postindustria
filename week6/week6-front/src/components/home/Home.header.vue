@@ -103,8 +103,11 @@ export default {
   methods: {
     async makeReport() {
       document.getElementById("close").click;
-      await this.$store.dispatch("makeReport");
-      this.$router.push("/report");
+
+      this.$store.dispatch("makeReport").then(() => {
+        this.$router.push("/report");
+      });
+      //await this.$store.dispatch("makeReport");
     },
   },
   data() {

@@ -1,7 +1,9 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import $ from "jquery";
 
 export default createStore({
+    
     state: {
         userData: {
             firstname: "",
@@ -68,6 +70,10 @@ export default createStore({
                 this.dispatch("getRate");
             }
         },
+        showModal() {
+            $("#modal").modal("hide");
+            $("#notificationModal").modal("show");
+        }
     },
     actions: {
         async getUserData() {
@@ -169,16 +175,17 @@ export default createStore({
                 });
         },
         makeReport() {
+            return new Promise((resolve) => {
 
-            axios
-                .get("api/action/" + this.state.from + "/" + this.state.to)
-                .then((response) => {
-                    this.state.report = response.data
-                }).catch(function (error) {
-                    console.log(error);
-                }).catch((error) => {
-                    console.log(error);
-                });
+                axios
+                    .get("api/action/" + this.state.from + "/" + this.state.to)
+                    .then((response) => {
+                        this.state.report = response.data
+                        resolve(response);
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
+            })
         },
         makeExchange() {
             axios
@@ -193,10 +200,12 @@ export default createStore({
                         this.state.label = []
                         this.state.label.push(element.info)
                     });
+                    this.commit("showModal");
                 }).catch((error) => {
                     console.log(error.response.data.error);
                     this.state.label = []
                     this.state.label.push(error.response.data.error)
+                    this.commit("showModal");
                 });
         },
         makeForceExchange() {
@@ -212,10 +221,12 @@ export default createStore({
                     response.data.data.forEach(element => {
                         this.state.label.push(element.info)
                     });
+                    this.commit("showModal");
                 }).catch((error) => {
                     console.log(error);
                     this.state.label = []
                     this.state.label.push(error.response.data)
+                    this.commit("showModal");
                 });
         },
         setIncome() {
@@ -232,9 +243,11 @@ export default createStore({
                     response.data.data.forEach(element => {
                         this.state.label.push(element.info)
                     });
+                    this.commit("showModal");
                 }).catch((error) => {
                     console.log(error);
                     this.state.label.push(error.response.data)
+                    this.commit("showModal");
                 });
         },
     },

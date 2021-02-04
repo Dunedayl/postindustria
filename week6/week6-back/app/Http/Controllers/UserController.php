@@ -25,15 +25,6 @@ class UserController extends Controller
         return new UserResource(Auth::user());
     }
 
-    public function email()
-    {
-        $user = Auth::user();
-
-        Mail::to($user->email)->send(new TaxMail($user->firstname, $user->lastname));
-        $users = User::all();
-        return $users;
-    }
-
     /**
      * Show the form for creating a new resource.
      *

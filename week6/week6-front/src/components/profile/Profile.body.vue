@@ -39,13 +39,14 @@
 
     <div class="row">
       <div class="col-6">
-        <form @submit.prevent="onSubmit">
+        <form name="userDataForm" @submit.prevent="onSubmit">
           <div class="form-group row">
             <label for="firstname" class="col-sm col-form-label"
               >Firstname</label
             >
             <div class="col-sm">
               <input
+                required
                 :readonly="!enabled"
                 type="text"
                 v-model="this.userData.firstname"
@@ -69,6 +70,7 @@
                   'form-control': enabled,
                 }"
                 id="lastname"
+                required
               />
             </div>
           </div>
@@ -76,6 +78,7 @@
             <label for="taxRate" class="col-sm col-form-label">Tax Rate:</label>
             <div class="col-sm">
               <input
+                required
                 :readonly="!enabled"
                 type="number"
                 v-bind:class="{
@@ -118,6 +121,7 @@
               >
               <div class="col-sm">
                 <input
+                  required
                   :readonly="!enabled"
                   type="number"
                   v-bind:class="{
@@ -153,7 +157,6 @@
           <div class="form-group row">
             <div class="col-sm">
               <button
-                v-on:click="enabled = false"
                 type="submit"
                 class="btn btns btn-primary"
                 v-bind:class="{ hiden: !enabled }"
@@ -163,8 +166,8 @@
 
               <button
                 v-on:click="enabled = false"
-                type="submit"
-                class="btn btns btn-primary"
+                class="btn btns btn-secondary"
+                type="button"
                 v-bind:class="{ hiden: !enabled }"
                 @click.prevent="onCancel"
               >
@@ -215,7 +218,7 @@
                       data-bs-dismiss="modal"
                       @click.prevent="cropImage"
                     >
-                      Crop
+                      Save
                     </a>
                     <a href="#" role="button" @click.prevent="showFileChooser">
                       Upload Image
@@ -243,8 +246,7 @@ export default {
   components: {
     VueCropper,
   },
-  computed: {
-  },
+  computed: {},
   async beforeCreate() {},
   async created() {
     await this.getData();
@@ -271,7 +273,9 @@ export default {
 
     cropImage() {
       this.userData.image = this.$refs.cropper.getCroppedCanvas().toDataURL();
-      this.$store.state.uploadImage = this.$refs.cropper.getCroppedCanvas().toDataURL()
+      this.$store.state.uploadImage = this.$refs.cropper
+        .getCroppedCanvas()
+        .toDataURL();
     },
     setImage(e) {
       const file = e.target.files[0];
@@ -304,6 +308,8 @@ export default {
     },
     onCancel() {
       this.userData = this.cachedUserData;
+      this.userData.currencies = this.cachedUserData.currencies;
+
     },
     editData() {
       this.cachedUserData = Object.assign({}, this.userData);
@@ -311,6 +317,7 @@ export default {
     async onSubmit() {
       this.$store.state.updateUserData = this.userData;
       this.$store.dispatch("updateUserData");
+      this.enabled = false
     },
     selectImage() {
       this.$refs.fileInput.click();
@@ -320,7 +327,7 @@ export default {
 </script>
 
 
-    <style>
+<style>
 .BigAvatar {
   vertical-align: left;
   align-self: left;

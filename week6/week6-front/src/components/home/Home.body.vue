@@ -30,8 +30,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(action,index) in $store.state.userActions" :key="index">
-              <th scope="row">{{ index+1 }}</th>
+            <tr
+              v-for="(action, index) in $store.state.userActions"
+              :key="index"
+            >
+              <th scope="row">{{ index + 1 }}</th>
               <td>{{ action.action }}</td>
               <td>{{ action.sum }}</td>
               <td>{{ action.currency }}</td>
@@ -102,6 +105,7 @@
                     >
                     <div class="col-sm">
                       <select
+                        required
                         class="custom-select my-1 mr-sm-2"
                         id="currency"
                         v-model="this.$store.state.selected"
@@ -124,7 +128,9 @@
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="date" class="col-sm col-form-label">Income Date</label>
+                    <label for="date" class="col-sm col-form-label"
+                      >Income Date</label
+                    >
                     <div class="col-sm">
                       <input
                         type="date"
@@ -161,7 +167,9 @@
                     "
                     class="form-group row"
                   >
-                    <label for="date" class="col-sm col-form-label">Force exchange Date</label>
+                    <label for="date" class="col-sm col-form-label"
+                      >Force exchange Date</label
+                    >
                     <div class="col-sm">
                       <input
                         type="date"
@@ -224,6 +232,7 @@
 
                     <div class="col-sm">
                       <select
+                        required
                         class="custom-select my-1 mr-sm-2"
                         id="currency"
                         v-model="this.$store.state.exchangeSelectedCurrency"
@@ -286,7 +295,13 @@
                     >
                       Close
                     </button>
-                    <button type="submit" class="btn btn-primary" v-on:click="this.close">Make</button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      v-on:click="this.close"
+                    >
+                      Make
+                    </button>
                   </div>
                   <label for="Exchangedate" class="col-sm col-form-label">{{
                     this.$store.state.exchangeLabel
@@ -316,6 +331,7 @@
 
                     <div class="col-sm">
                       <select
+                        required
                         class="custom-select my-1 mr-sm-2"
                         id="currency"
                         v-model="this.$store.state.exchangeSelectedCurrency"
@@ -392,7 +408,13 @@
                     >
                       Close
                     </button>
-                    <button type="submit" class="btn btn-primary" v-on:click="this.close">Make</button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      v-on:click="this.close"
+                    >
+                      Make
+                    </button>
                   </div>
                   <label for="Exchangedate" class="col-sm col-form-label">
                     {{ this.$store.state.exchangeLabel }}</label
@@ -419,30 +441,24 @@
           </div>
           <div class="modal-body">
             <ul>
-              <li v-for="(user, index) in  this.$store.state.label" :key="index">{{ user }}</li>
+              <li v-for="(user, index) in this.$store.state.label" :key="index">
+                {{ user }}
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
-import $ from "jquery";
-
 export default {
   name: "HomeBody",
   beforeCreate() {},
-    components: {
-    
-  },
+  components: {},
   methods: {
-    close() {
-      $("#modal").modal("hide");
-      $("#notificationModal").modal("show");
-    },
+    close() {},
     ifCurrency() {
       try {
         return this.$store.state.userData.currencies.find(
