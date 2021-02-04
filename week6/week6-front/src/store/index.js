@@ -47,7 +47,8 @@ export default createStore({
         forceExchangeIncomeDate: "",
         forceExchangeDate: "",
         today: "",
-        dateForRate: ""
+        dateForRate: "",
+        forceExchangeSelectedCurrency: ""
     },
     getters: {
     },
@@ -107,7 +108,6 @@ export default createStore({
         },
         getRate() {
 
-            console.log()
             axios
                 .get("api/rate/" + this.state.dateForExchange + "/" + this.state.exchangeCurrency)
                 .then((response) => {
@@ -226,9 +226,10 @@ export default createStore({
                     sum: this.state.exchangeSum,
                     date: this.state.incomeDate,
                     exchangeDate: this.state.forceExchangeDate,
-                    currency: this.state.forceExchangeIncomeDate
+                    currency: this.state.forceExchangeSelectedCurrency
                 })
                 .then((response) => {
+                    console.log(response)
                     this.state.label = []
                     response.data.data.forEach(element => {
                         this.state.label.push(element.info)
@@ -237,7 +238,7 @@ export default createStore({
                 }).catch((error) => {
                     console.log(error);
                     this.state.label = []
-                    this.state.label.push(error.response.data)
+                    this.state.label.push(error.response.data.error)
                     this.commit("showModal");
                 });
         },

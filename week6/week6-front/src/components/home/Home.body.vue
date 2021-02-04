@@ -335,7 +335,7 @@
                         required
                         class="custom-select my-1 mr-sm-2"
                         id="currency"
-                        v-model="this.$store.state.exchangeSelectedCurrency"
+                        v-model="this.$store.state.forceExchangeSelectedCurrency"
                       >
                         <option
                           v-for="(currency, index) in this.$store.state.userData

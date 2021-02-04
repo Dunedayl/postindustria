@@ -5,23 +5,12 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Http\Requests\ExchangeUserActionRequest;
 use App\Http\Requests\StoreUserActionRequest;
-use App\Http\Resources\ReportGenerationResource;
 use App\Http\Resources\UserActionResource;
-use App\Models\Actor;
-use App\Models\ActorActions;
-use App\Models\ActorData;
-use App\Models\ActorUsdHistory;
-use App\Models\User;
 use App\Models\UserAction;
-use App\Models\UserCurrency;
-use App\Models\UsersActions;
-use App\Models\UsersCurrencyHistories;
-use App\Models\UsersData;
 use App\Services\ForceExchangeService;
 use App\Services\ReportGenerationService;
 use App\Services\UserActionExchangeService;
 use App\Services\UserActionStoreService;
-use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +67,13 @@ class UserActionController extends Controller
     public function forceExchage(StoreUserActionRequest $request, ForceExchangeService $forceExchangeService)
     {
         $userAction = $forceExchangeService->forceExchage(Auth::user(), $request, true);
-        return UserActionResource::collection($userAction["data"]);
+
+        if (array_key_exists('error', $userAction)) {
+            return response()->json(["error" => $userAction["error"]], 409);
+        } else {
+            return UserActionResource::collection($userAction["data"]);
+        }
+
     }
 
     //Exchange USD in UAH

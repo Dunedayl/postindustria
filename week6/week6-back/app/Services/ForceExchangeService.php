@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Models\UserAction;
 use App\Models\UserCurrency;
 use App\Models\UserCurrencyHistory;
+use Exception;
 
 //NOTE ALL MONEY STORED IN CENTS
 class ForceExchangeService
@@ -35,12 +36,17 @@ class ForceExchangeService
             // Corecting the sum of the past transaction
             $action = UserAction::where("user_id", $this->user->id)
                 ->where("date", $this->request->date)
-                ->where("sum",$this->request->sum * 100)
+                ->where("sum", $this->request->sum * 100)
                 ->first();
+
+            if ($action == null) {
+                return  ["error" => "Error transaction is not found"];
+            }
             $income = $sum * 100;
             $action->sum = $income;
             $action->info = "Income {$income} {$this->request->currency}";
             $action->save();
+
 
             //Corecting the sum in the history of income in that currency
             $currencyHistory = UserCurrencyHistory::where("user_id", $this->user->id)
