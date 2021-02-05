@@ -3,7 +3,7 @@ import axios from 'axios'
 import $ from "jquery";
 
 export default createStore({
-    
+
     state: {
         userData: {
             firstname: "",
@@ -69,7 +69,7 @@ export default createStore({
             this.state.incomeForceExchange = today;
             this.state.forceExchangeIncomeDate = today;
             this.state.forceExchangeDate = today;
-            
+
 
         },
         getExchangeRate(state, data) {
@@ -96,7 +96,10 @@ export default createStore({
                         this.state.userData.lastname = response.data.data.lastname;
                         this.state.userData.taxRate = response.data.data.tax_rate;
                         this.state.userData.notificationPeriod = response.data.data.notification_period;
-                        this.state.userData.image = response.data.data.image;
+                        if (response.data.data.image != "") {
+                            this.state.userData.image = response.data.data.image;
+
+                        }
                         this.state.userData.currencies = response.data.data.currencies;
                         this.state.default_currency = response.data.data.default_currency;
                         resolve(response);
@@ -137,7 +140,7 @@ export default createStore({
                     const u8arr = new Uint8Array(n)
                     while (n) {
                         u8arr[n - 1] = bstr.charCodeAt(n - 1)
-                        n -= 1 
+                        n -= 1
                     }
                     return new File([u8arr], filename, { type: mime })
                 }
@@ -152,7 +155,7 @@ export default createStore({
                 data.append('lastname', this.state.updateUserData.lastname)
                 data.append('notification_period', this.state.updateUserData.notificationPeriod)
 
-                this.state.userData.currencies.forEach( (val, index) => {
+                this.state.userData.currencies.forEach((val, index) => {
                     Object.entries(val).forEach(entry => {
                         const [key, value] = entry;
                         data.append('currencies[' + index + '][' + key + ']', value)
