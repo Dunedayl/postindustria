@@ -62,7 +62,7 @@ class ForceExchangeService
         $info = "Force exchange $forceAmount {$this->request->currency} it's $forceAmountPersent % from {$this->request->sum} {$this->request->currency}";
         $this->return[] = $this->writeToUserAction('Force exchange', $forceAmount, $this->request->currency, $info);
 
-        $rate = Helper::getRate($this->request->date, $this->request->currency);
+        $rate = Helper::getRate($this->request->exchangeDate, $this->request->currency);
 
         $incomeFromFroceExchange = $forceAmount * $rate;
         $incomeFromFroceExchangeFormated = number_format ($incomeFromFroceExchange, 2);
