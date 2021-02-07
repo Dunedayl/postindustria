@@ -61,6 +61,7 @@ export default {
   },
   methods: {
     async logIn() {
+      console.log("sa")
       axios
         .post("api/login", {
           email: this.email,

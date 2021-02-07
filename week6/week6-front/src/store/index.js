@@ -48,7 +48,8 @@ export default createStore({
         forceExchangeDate: "",
         today: "",
         dateForRate: "",
-        forceExchangeSelectedCurrency: ""
+        forceExchangeSelectedCurrency: "",
+        auth : ""
     },
     getters: {
     },
@@ -96,7 +97,7 @@ export default createStore({
                         this.state.userData.lastname = response.data.data.lastname;
                         this.state.userData.taxRate = response.data.data.tax_rate;
                         this.state.userData.notificationPeriod = response.data.data.notification_period;
-                        if (response.data.data.image != "") {
+                        if (response.data.data.image != null) {
                             this.state.userData.image = response.data.data.image;
 
                         }
@@ -266,6 +267,20 @@ export default createStore({
                     this.commit("showModal");
                 });
         },
+        checkUser() {
+            return new Promise((resolve) => {
+                axios
+                    .post("api/check")
+                    .then((response) => {
+                        //console.log(response.data);
+                        this.state.auth = response.data
+                        resolve(response);
+                    }).catch((error) => {
+                        this.state.auth = 0
+                        resolve(error);
+                    });
+            })
+        }
     },
     modules: {
     }

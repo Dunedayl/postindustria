@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import store from '../store/index'
 
 const routes = [
   {
@@ -45,9 +46,19 @@ const routes = [
   }
 ]
 
+
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+
+router.beforeEach(async (to, from, next) => {
+  await store.dispatch("checkUser").then(() => {
+    if (store.state.auth == 0 && to.name !== 'Login' && to.name !== 'Signup' ) next({ name: 'Login' })
+      else next()
+  });
+})
+
 
 export default router

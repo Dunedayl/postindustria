@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserCurrency;
 use App\Models\UsersCurrency;
 use App\Models\UsersData;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -68,7 +69,7 @@ class AuthController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()) {
             return 1;
