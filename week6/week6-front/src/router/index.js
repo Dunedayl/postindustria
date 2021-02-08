@@ -54,10 +54,11 @@ const router = createRouter({
 
 
 router.beforeEach(async (to, from, next) => {
-  await store.dispatch("checkUser").then(() => {
-    if (store.state.auth == 0 && to.name !== 'Login' && to.name !== 'Signup' ) next({ name: 'Login' })
+    await store.dispatch("checkUser").then(() => {
+      console.log(store.state.isLogged)
+      if (from.name !== 'Login' && store.state.isLogged == 0 && to.name !== 'Login' && to.name !== 'Signup') next({ name: 'Login' })
       else next()
-  });
+    });
 })
 
 

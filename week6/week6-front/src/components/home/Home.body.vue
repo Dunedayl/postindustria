@@ -460,7 +460,6 @@
 export default {
   name: "HomeBody",
   beforeCreate() {
-    this.$store.commit("setToday");
   },
   components: {},
   methods: {

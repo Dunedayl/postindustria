@@ -98,7 +98,6 @@
 export default {
   name: "HomeHeader",
   beforeCreate() {
-    this.$store.dispatch("getUserActions");
   },
   methods: {
     async makeReport() {

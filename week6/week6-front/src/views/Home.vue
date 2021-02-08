@@ -12,11 +12,15 @@ import HomeBody from "@/components/home/Home.body.vue";
 
 export default {
   name: "Home",
-  async created() {
-    await this.$store.dispatch("getUserActions");
-    await this.$store.dispatch("getUserData");
-    await this.$store.dispatch("getUserCurrencies");
-    this.$store.commit("setToday");
+  beforeCreate() {
+  },
+  created () {
+
+    this.$store.dispatch("getUserData").then(() => {
+      this.$store.dispatch("getUserActions");
+      this.$store.dispatch("getUserCurrencies");
+      this.$store.commit("setToday");
+    });
   },
   components: {
     HomeHeader,

@@ -61,7 +61,6 @@ export default {
   },
   methods: {
     async logIn() {
-      console.log("sa")
       axios
         .post("api/login", {
           email: this.email,
@@ -69,7 +68,7 @@ export default {
         })
         .then((response) => {
           localStorage.setItem("token", response.data.token);
-          this.$store.state.isLogged = true;
+          this.$store.state.isLogged = 1;
           this.$router.push("/home");
         });
     },

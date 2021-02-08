@@ -16,7 +16,7 @@ export default createStore({
         updateUserData: "",
         uploadImage: "",
         default_currency: "",
-        isLogged: "false",
+        isLogged: "0",
         image: "",
         userActions: [],
         from: "",
@@ -49,7 +49,6 @@ export default createStore({
         today: "",
         dateForRate: "",
         forceExchangeSelectedCurrency: "",
-        auth : ""
     },
     getters: {
     },
@@ -90,8 +89,9 @@ export default createStore({
         async getUserData() {
 
             return new Promise((resolve) => {
+
                 axios
-                    .get("api/data",)
+                    .get("api/data")
                     .then((response) => {
                         this.state.userData.firstname = response.data.data.firstname;
                         this.state.userData.lastname = response.data.data.lastname;
@@ -105,6 +105,7 @@ export default createStore({
                         this.state.default_currency = response.data.data.default_currency;
                         resolve(response);
                     }).catch((error) => {
+                        resolve(error);
                         console.log(error);
                     });
             })
@@ -180,8 +181,10 @@ export default createStore({
             })
         },
         getUserActions() {
+
+
             axios
-                .get("api/action/all",)
+                .get("api/action/all")
                 .then((response) => {
                     console.log(response.data.data);
                     this.state.userActions = response.data.data;
@@ -272,12 +275,11 @@ export default createStore({
                 axios
                     .post("api/check")
                     .then((response) => {
-                        //console.log(response.data);
-                        this.state.auth = response.data
+                        this.state.isLogged = response.data
                         resolve(response);
-                    }).catch((error) => {
-                        this.state.auth = 0
-                        resolve(error);
+                    }).catch(() => {
+                        this.state.isLogged = 0
+                        resolve();
                     });
             })
         }
